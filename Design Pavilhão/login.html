@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pavilhão Maker – Login</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#8b5000",
+            darkSide: "#1e1e1e"
+          },
+          fontFamily: {
+            inter: ["Inter", "sans-serif"],
+            space: ["Space Grotesk", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9f9fa;
+    }
+    .industrial-grid {
+      background-image: radial-gradient(#e2e2e3 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s ease-out both;
+    }
+    .login-input {
+      transition: all 0.3s ease;
+    }
+    .login-input:hover {
+      box-shadow: 0 0 15px rgba(201, 90, 90, 0.3);
+    }
+    .login-input:focus {
+      box-shadow: 0 0 20px rgba(201, 90, 90, 0.5);
+      border-color: #c95a5a;
+      outline: none;
+    }
+    .login-btn {
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
+    .login-btn:active {
+      transform: scale(0.97);
+    }
+    .fancy-link {
+      transition: color 0.3s ease, letter-spacing 0.3s ease;
+    }
+    .fancy-link:hover {
+      letter-spacing: 0.5px;
+    }
+    .login-icon {
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s;
+    }
+    .login-header:hover .login-icon-main {
+      transform: scale(1.1) rotate(5deg);
+      opacity: 0.9;
+    }
+    .login-header:hover .login-badge {
+      transform: translate(3px, -3px) rotate(8deg);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+    }
+    .login-badge {
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s;
+    }
+    .login-title {
+      transition: transform 0.3s ease, letter-spacing 0.3s ease;
+    }
+    .login-title:hover {
+      transform: translateY(-3px);
+      letter-spacing: 0.02em;
+    }
+
+    /* Animação do cartão branco */
+    .white-card-hover {
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .white-card-hover:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 30px 60px -15px rgba(180, 60, 60, 0.25), 0 0 0 1px rgba(201, 90, 90, 0.15);
+    }
+
+    /* Ícones decorativos - sempre visíveis com hover sutil */
+    .ambient-icon {
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease;
+      cursor: default;
+      pointer-events: auto;
+    }
+    .ambient-icon:hover {
+      transform: translateY(-6px) scale(1.08) rotate(5deg) !important;
+      opacity: 0.35 !important;
+    }
+    /* Garantindo visibilidade mínima */
+    .ambient-icon {
+      opacity: 0.15; /* fallback */
+    }
+  </style>
+</head>
+
+<body class="min-h-screen industrial-grid">
+
+  <main class="min-h-screen relative overflow-hidden flex items-center justify-center px-8">
+
+    <!-- Ambientação lateral abstrata -->
+    <div class="absolute inset-0">
+      <!-- Lado esquerdo: 4 ícones com opacidade visível e hover individual -->
+      <span class="material-symbols-outlined absolute left-[2%] top-[8%] text-[12rem] text-[#c95a5a] ambient-icon -rotate-12" style="opacity: 0.15;">precision_manufacturing</span>
+      <span class="material-symbols-outlined absolute left-[15%] top-[34%] text-[9rem] text-[#b94d4d] ambient-icon rotate-45" style="opacity: 0.2;">view_in_ar</span>
+      <span class="material-symbols-outlined absolute left-[2%] top-[58%] text-[10rem] text-[#c95a5a] ambient-icon -rotate-15" style="opacity: 0.18;">engineering</span>
+      <span class="material-symbols-outlined absolute left-[15%] top-[82%] text-[8rem] text-[#8b1e35] ambient-icon rotate-6" style="opacity: 0.15;">build</span>
+
+      <!-- Lado direito: 4 ícones com opacidade visível e hover individual -->
+      <span class="material-symbols-outlined absolute right-[2%] top-[8%] text-[12rem] text-[#8b1e35] ambient-icon rotate-12" style="opacity: 0.15;">memory</span>
+      <span class="material-symbols-outlined absolute right-[15%] top-[34%] text-[9rem] text-[#c95a5a] ambient-icon -rotate-45" style="opacity: 0.2;">handyman</span>
+      <span class="material-symbols-outlined absolute right-[2%] top-[58%] text-[10rem] text-zinc-800 ambient-icon -rotate-90" style="opacity: 0.12;">settings</span>
+      <span class="material-symbols-outlined absolute right-[15%] top-[82%] text-[8rem] text-[#b94d4d] ambient-icon rotate-30" style="opacity: 0.2;">cycle</span>
+
+      <!-- Linhas de circuito sutis (sem interação) -->
+      <svg class="absolute left-0 top-0 w-64 h-full opacity-10 pointer-events-none" viewBox="0 0 200 800" fill="none">
+        <rect x="20" y="100" width="40" height="2" fill="#c95a5a"/>
+        <rect x="60" y="100" width="2" height="30" fill="#c95a5a"/>
+        <rect x="60" y="130" width="25" height="2" fill="#c95a5a"/>
+        <circle cx="85" cy="131" r="3" fill="#c95a5a"/>
+        <rect x="30" y="300" width="2" height="50" fill="#8b1e35"/>
+        <rect x="30" y="350" width="30" height="2" fill="#8b1e35"/>
+      </svg>
+      <svg class="absolute right-0 top-0 w-64 h-full opacity-10 scale-x-[-1] pointer-events-none" viewBox="0 0 200 800" fill="none">
+        <rect x="20" y="200" width="40" height="2" fill="#b94d4d"/>
+        <rect x="60" y="200" width="2" height="40" fill="#b94d4d"/>
+        <rect x="60" y="240" width="20" height="2" fill="#b94d4d"/>
+        <circle cx="80" cy="241" r="3" fill="#b94d4d"/>
+        <rect x="30" y="500" width="2" height="70" fill="#c95a5a"/>
+        <rect x="30" y="570" width="35" height="2" fill="#c95a5a"/>
+      </svg>
+
+      <!-- Manchas de cor (sem interação) -->
+      <div class="absolute left-0 top-0 w-64 h-64 bg-[#c95a5a]/5 blur-3xl rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+      <div class="absolute right-0 bottom-0 w-96 h-96 bg-[#8b1e35]/5 blur-3xl rounded-full translate-x-1/3 translate-y-1/3 pointer-events-none"></div>
+    </div>
+
+    <!-- Container do login -->
+    <div class="w-full max-w-md animate-fade-in-up relative z-10">
+      <div class="text-center mb-10 login-header">
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[#1e1e1e] to-zinc-800 shadow-xl mb-5 relative cursor-default">
+          <span class="material-symbols-outlined text-4xl text-white login-icon login-icon-main">lock</span>
+          <span class="absolute -top-2 -right-2 w-6 h-6 bg-[#c95a5a] rounded-full flex items-center justify-center shadow login-badge">
+            <span class="material-symbols-outlined text-white text-sm">fingerprint</span>
+          </span>
+        </div>
+        <h2 class="font-['Space_Grotesk'] text-3xl font-bold text-zinc-800 login-title cursor-default">Acessar Painel</h2>
+        <p class="text-zinc-500 mt-2 font-light">Entre com suas credenciais institucionais</p>
+      </div>
+
+      <!-- Cartão branco COM ANIMAÇÃO -->
+      <div class="bg-white rounded-2xl shadow-2xl p-8 border border-zinc-100/50 backdrop-blur-sm white-card-hover">
+        <form class="space-y-6" onsubmit="event.preventDefault()">
+          <div>
+            <label class="block text-sm font-semibold text-zinc-600 mb-1.5 ml-1 uppercase tracking-wider font-['Space_Grotesk']">
+              Nome de usuário ou email
+            </label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
+                <span class="material-symbols-outlined">person</span>
+              </span>
+              <input type="text" placeholder="ex: joao.silva@unicap.br" 
+                     class="w-full pl-12 pr-5 py-3.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-800 placeholder-zinc-400
+                            transition-all login-input focus:bg-white" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-zinc-600 mb-1.5 ml-1 uppercase tracking-wider font-['Space_Grotesk']">
+              Senha
+            </label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
+                <span class="material-symbols-outlined">key</span>
+              </span>
+              <input id="password" type="password" placeholder="••••••••" 
+                     class="w-full pl-12 pr-12 py-3.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-800 placeholder-zinc-400
+                            transition-all login-input focus:bg-white" />
+              <button type="button" id="togglePassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600">
+                <span id="eyeIcon" class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <label class="flex items-center gap-2 text-zinc-600 cursor-pointer">
+              <input type="checkbox" class="rounded border-zinc-300 text-[#c95a5a] focus:ring-[#c95a5a]" />
+              Lembrar-me
+            </label>
+            <a href="#" class="text-[#c95a5a] hover:text-[#8b1e35] font-medium fancy-link">Esqueceu a senha?</a>
+          </div>
+          <button type="submit" 
+                  class="w-full py-3.5 bg-gradient-to-r from-[#1e1e1e] to-zinc-800 text-white font-bold rounded-xl
+                         login-btn tracking-wider font-['Space_Grotesk'] uppercase text-sm flex items-center justify-center gap-2">
+            <span>Entrar</span>
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+          </button>
+        </form>
+        <div class="mt-6 pt-5 border-t border-dashed border-zinc-200">
+          <p class="text-center text-xs text-zinc-400">
+            Acesso restrito a técnicos e docentes autorizados
+          </p>
+        </div>
+      </div>
+      <p class="text-center text-xs text-zinc-400 mt-8">
+        Pavilhão Maker © 2026 – Universidade Católica de Pernambuco
+      </p>
+    </div>
+
+  </main>
+
+  <script>
+    const passwordInput = document.getElementById('password');
+    const toggleBtn = document.getElementById('togglePassword');
+    const eyeIcon = document.getElementById('eyeIcon');
+    toggleBtn.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      eyeIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
+    });
+  </script>
+</body>
+</html>

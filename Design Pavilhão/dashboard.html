@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html class="light" lang="pt-br"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+darkMode: "class",
+theme: {
+extend: {
+"colors": {
+"on-tertiary": "#ffffff",
+"primary": "#8b5000",
+"surface-container-lowest": "#ffffff",
+"outline-variant": "#dbc2ad",
+"surface-container-highest": "#e2e2e3",
+"on-error": "#ffffff",
+"primary-container": "#ff9800",
+"secondary-container": "#e2dfde",
+"on-tertiary-fixed": "#261a00",
+"surface-container-low": "#f3f3f4",
+"on-primary": "#ffffff",
+"inverse-on-surface": "#f0f1f2",
+"tertiary-fixed": "#ffdfa0",
+"on-primary-fixed": "#2c1600",
+"on-surface-variant": "#554434",
+"on-tertiary-fixed-variant": "#5c4300",
+"surface-variant": "#e2e2e3",
+"error": "#ba1a1a",
+"inverse-primary": "#ffb870",
+"surface-dim": "#dadadb",
+"on-secondary-container": "#636262",
+"tertiary-fixed-dim": "#fbbc00",
+"on-secondary-fixed-variant": "#474746",
+"on-tertiary-container": "#584000",
+"primary-fixed": "#ffdcbe",
+"background": "#f9f9fa",
+"primary-fixed-dim": "#ffb870",
+"on-background": "#1a1c1d",
+"secondary": "#5f5e5e",
+"tertiary-container": "#e0a800",
+"on-secondary-fixed": "#1b1b1c",
+"on-secondary": "#ffffff",
+"tertiary": "#795900",
+"on-surface": "#1a1c1d",
+"error-container": "#ffdad6",
+"on-primary-fixed-variant": "#693c00",
+"surface-container": "#eeeeef",
+"surface": "#f9f9fa",
+"surface-bright": "#f9f9fa",
+"outline": "#887361",
+"inverse-surface": "#2f3132",
+"surface-container-high": "#e8e8e9",
+"on-primary-container": "#653900",
+"on-error-container": "#93000a",
+"secondary-fixed": "#e5e2e1",
+"surface-tint": "#8b5000",
+"secondary-fixed-dim": "#c8c6c5"
+},
+"borderRadius": {
+"DEFAULT": "0.125rem",
+"lg": "0.25rem",
+"xl": "0.5rem",
+"full": "0.75rem"
+},
+"spacing": {
+"gutter": "24px",
+"base": "8px",
+"margin": "32px",
+"sidebar-width": "280px"
+},
+"fontFamily": {
+"h1": ["Space Grotesk"],
+"mono-label": ["monospace"],
+"body-lg": ["Inter"],
+"h2": ["Space Grotesk"],
+"body-md": ["Inter"],
+"h3": ["Space Grotesk"],
+"label-caps": ["Inter"]
+},
+"fontSize": {
+"h1": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+"mono-label": ["14px", {"lineHeight": "1", "fontWeight": "500"}],
+"body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+"h2": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+"body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+"h3": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+"label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}]
+}
+}
+}
+}
+</script>
+
+<style>
+.material-symbols-outlined {
+font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Animações */
+.sidebar-title { transition: transform 0.3s ease, letter-spacing 0.3s ease; display: inline-block; }
+.sidebar-title:hover { transform: translateY(-3px); letter-spacing: 0.05em; }
+.header-title { transition: transform 0.25s ease, color 0.25s ease; display: inline-block; cursor: default; }
+.header-title:hover { transform: translateY(-2px); color: #c95a5a; }
+.nav-link { position: relative; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.nav-link:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+.nav-link::after { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(255,255,255,0.1); transform: translate(-50%, -50%); transition: width 0.6s ease, height 0.6s ease; }
+.nav-link:hover::after { width: 300px; height: 300px; }
+.card-animated { position: relative; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.card-animated:hover { transform: scale(1.02); box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+.card-animated::after { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(0,0,0,0.02); transform: translate(-50%, -50%); transition: width 0.7s ease, height 0.7s ease; pointer-events: none; }
+.card-animated:hover::after { width: 400px; height: 400px; }
+.avatar-container { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.avatar-container:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+.btn-scale { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.btn-scale:hover { transform: scale(1.08); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+.btn-scale:active { transform: scale(0.97); }
+
+/* Grade do calendário */
+.calendar-grid-new { display: grid; grid-template-columns: 90px repeat(6, 1fr); }
+.event-card { position: absolute; left: 8px; right: 8px; border-radius: 8px; padding: 12px; font-size: 13px; font-weight: 700; transition: 0.3s ease; cursor: pointer; }
+.event-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.10); }
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); box-shadow: 0 0 20px rgba(0,0,0,0.2); }
+  100% { transform: scale(1); box-shadow: none; }
+}
+.animate-pulse-event { animation: pulse 0.4s ease-in-out; }
+
+/* Modal principal (evento) */
+.modal-overlay { display: flex; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-content { background: white; border-radius: 24px; max-width: 500px; width: 90%; padding: 32px; box-shadow: 0 30px 60px rgba(0,0,0,0.3); position: relative; border: 4px solid; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease, filter 0.4s ease; }
+
+/* Efeito 3D: primeiro modal vai para a esquerda e fica mais visível que a página */
+.modal-overlay.stacked {
+  background: rgba(0,0,0,0.7); /* fundo da página mais escuro */
+}
+.modal-overlay.stacked .modal-content {
+  transform: perspective(1000px) rotateY(-5deg) translateX(-80px);
+  opacity: 0.85; /* popup 1 bem visível, menos transparente que o fundo */
+  filter: blur(0px);
+}
+
+/* Segundo modal (formulário) - opaco e à direita */
+.form-popup-overlay {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 110;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.form-popup-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.form-popup-content {
+  background: white;
+  border-radius: 24px;
+  max-width: 600px;
+  width: 95%;
+  padding: 32px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+  position: relative;
+  border: 4px solid;
+  transform: perspective(1000px) rotateY(5deg) translateX(80px);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (max-width: 768px) {
+  .modal-overlay.stacked .modal-content {
+    transform: perspective(1000px) rotateY(-3deg) translateX(-30px);
+  }
+  .form-popup-content {
+    transform: perspective(1000px) rotateY(3deg) translateX(30px);
+  }
+}
+
+.scrollable-calendar { max-height: 700px; overflow-y: auto; }
+.scrollable-view { max-height: 600px; overflow-y: auto; }
+</style>
+
+</head>
+
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+
+<!-- Sidebar -->
+<aside class="fixed left-0 top-0 h-full w-64 border-r border-zinc-800 bg-[#1e1e1e] shadow-xl flex flex-col py-6 z-50">
+  <div class="px-6 mb-10"><h1 class="text-lg font-black text-white uppercase tracking-widest font-h1 sidebar-title">Pavilhão Maker</h1></div>
+  <nav class="flex-1 space-y-1">
+    <a class="text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-6 py-3 flex items-center gap-3 transition-all font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="#"><span class="material-symbols-outlined">fact_check</span>Triagem</a>
+    <a class="text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-6 py-3 flex items-center gap-3 transition-all font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="#"><span class="material-symbols-outlined">add_box</span>Nova Solicitação</a>
+    <a class="bg-zinc-800 text-white border-l-4 border-orange-500 px-6 py-3 flex items-center gap-3 font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="#"><span class="material-symbols-outlined">calendar_today</span>Calendário</a>
+    <a class="text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-6 py-3 flex items-center gap-3 transition-all font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="#"><span class="material-symbols-outlined">settings</span>Configurações</a>
+  </nav>
+  <div class="mt-auto px-6 pt-6 border-t border-zinc-800 flex items-center gap-3 avatar-container cursor-pointer">
+    <div class="w-10 h-10 rounded-full bg-zinc-700 overflow-hidden border border-zinc-600"><img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1T85RR_Y4ji29HakfYdWYbALiPNOlZ7XXyF8GDQ7grPVFeyEOT-THz0nYnH-HpZkZv3K6AYzEZLU4T-tWSoiRrqV-90quLXFTq8MUAp9FydyGo60THeYwqnPZbholU7oddkMY8O-5XeRXaHPiZpJIb0Kc1g2l90TVj9bLizdx_95p7kDrHUzXQOeEH3Z51XkkXXShv5DF6XgYEURnhqKW74sp0y-MElEEbMUAigowVUle3MZThUhP-K8IKouQgBxPqoHKaxA1FQU"/></div>
+    <div class="flex flex-col"><span class="text-white text-xs font-bold uppercase tracking-tighter">Coordenação</span><span class="text-zinc-500 text-[10px] font-mono">ID: 99423</span></div>
+  </div>
+</aside>
+
+<div class="ml-64 flex-1 flex flex-col min-h-screen">
+
+<!-- Header -->
+<header class="flex justify-between items-center w-full px-6 h-16 bg-white border-b border-zinc-200 sticky top-0 z-40">
+  <div class="flex items-center gap-4">
+    <span class="text-xl font-black uppercase tracking-wider text-zinc-900 font-h1 header-title">PAVILHÃO MAKER</span>
+    <span class="w-[1px] h-6 bg-zinc-200"></span>
+    <span class="font-h3 text-h3 text-on-surface-variant header-title">Dashboard de Ocupação</span>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant">
+      <span class="material-symbols-outlined text-sm text-blue-600">sync</span>
+      <span class="text-label-caps font-label-caps text-on-surface-variant uppercase">Sincronizado</span>
+      <span class="material-symbols-outlined text-sm text-secondary">groups</span>
+    </div>
+    <div class="w-10 h-10 flex items-center justify-center hover:bg-zinc-50 transition-colors cursor-pointer rounded-full"><span class="material-symbols-outlined text-zinc-900">notifications</span></div>
+  </div>
+</header>
+
+<main class="p-gutter space-y-gutter flex-1 bg-background">
+
+<!-- Métricas -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+  <div class="bg-white p-6 border border-zinc-200 shadow-sm flex flex-col justify-between card-animated">
+    <div class="flex items-center justify-between mb-4"><span class="text-label-caps font-label-caps text-on-surface-variant tracking-widest uppercase">Total Bookings</span><span class="material-symbols-outlined text-primary">event_available</span></div>
+    <div><span class="text-h1 font-h1 text-on-surface">32</span><span class="text-green-600 text-sm font-medium ml-2">+4 este mês</span></div>
+  </div>
+  <div class="bg-white p-6 border border-zinc-200 shadow-sm flex flex-col justify-between card-animated">
+    <div class="flex items-center justify-between mb-4"><span class="text-label-caps font-label-caps text-on-surface-variant tracking-widest uppercase">Taxa de Ocupação</span><span class="material-symbols-outlined text-primary">analytics</span></div>
+    <div><span class="text-h1 font-h1 text-on-surface">78%</span><div class="w-full bg-surface-container h-1.5 rounded-full mt-3 overflow-hidden"><div class="bg-primary h-full" style="width:78%"></div></div></div>
+  </div>
+  <div class="bg-white p-6 border border-zinc-200 shadow-sm flex flex-col justify-between border-b-4 border-b-tertiary-container card-animated">
+    <div class="flex items-center justify-between mb-4"><span class="text-label-caps font-label-caps text-on-surface-variant tracking-widest uppercase">Solicitações Pendentes</span><span class="material-symbols-outlined text-tertiary-container">pending_actions</span></div>
+    <div><span class="text-h1 font-h1 text-on-surface">12</span><p class="text-label-caps font-label-caps text-secondary mt-1 uppercase">Aguardando Triagem</p></div>
+  </div>
+</div>
+
+<!-- Calendário -->
+<div class="grid grid-cols-12 gap-gutter items-start">
+  <div class="col-span-12 lg:col-span-8 bg-white border border-zinc-200 shadow-sm overflow-x-auto">
+    <div class="p-6 border-b border-zinc-100 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <button id="prevBtn" class="p-2 hover:bg-zinc-50 border border-zinc-200 rounded btn-scale"><span class="material-symbols-outlined">chevron_left</span></button>
+        <h2 class="text-h3 font-h3" id="calendar-title">Novembro 2024</h2>
+        <button id="nextBtn" class="p-2 hover:bg-zinc-50 border border-zinc-200 rounded btn-scale"><span class="material-symbols-outlined">chevron_right</span></button>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button class="px-4 py-2 border border-zinc-300 font-label-caps text-label-caps rounded uppercase hover:bg-zinc-50 transition-colors btn-scale" id="todayBtn">Hoje</button>
+        <button class="px-4 py-2 border border-zinc-300 font-label-caps text-label-caps rounded uppercase hover:bg-zinc-50 transition-colors btn-scale view-btn bg-zinc-900 text-white" data-view="month">Mês</button>
+        <button class="px-4 py-2 border border-zinc-300 font-label-caps text-label-caps rounded uppercase hover:bg-zinc-50 transition-colors btn-scale view-btn" data-view="week">Semana</button>
+        <button class="px-4 py-2 border border-zinc-300 font-label-caps text-label-caps rounded uppercase hover:bg-zinc-50 transition-colors btn-scale view-btn" data-view="day">Dia</button>
+        <button class="px-4 py-2 border border-zinc-300 font-label-caps text-label-caps rounded uppercase hover:bg-zinc-50 transition-colors btn-scale view-btn" data-view="year">Ano</button>
+      </div>
+    </div>
+
+    <!-- View Mês com scroll -->
+    <div id="view-month" class="relative w-full min-w-[950px] scrollable-calendar" style="display: block;">
+      <div class="calendar-grid-new border-t border-l border-[#edf0f5]">
+        <div class="cell flex items-center justify-center border-r border-b border-[#edf0f5] h-20"><span class="material-symbols-outlined text-3xl text-zinc-300">schedule</span></div>
+        <div class="cell flex items-center justify-center font-bold border-r border-b border-[#edf0f5] h-20">Segunda 12</div>
+        <div class="cell flex items-center justify-center font-bold border-r border-b border-[#edf0f5] h-20">Terça 13</div>
+        <div class="cell flex items-center justify-center font-bold border-r border-b border-[#edf0f5] h-20">Quarta 14</div>
+        <div class="cell flex items-center justify-center font-bold border-r border-b border-[#edf0f5] h-20">Quinta 15</div>
+        <div class="cell flex items-center justify-center font-bold border-r border-b border-[#edf0f5] h-20">Sexta 16</div>
+        <div class="cell flex items-center justify-center font-bold border-b border-[#edf0f5] h-20">Sábado 17</div>
+        <!-- 09:00 -->
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">09</div>
+        <div class="cell relative border-r border-b border-[#edf0f5] h-[78px]"><div class="event-card green top-[5px] h-[145px] bg-green-50 border-2 border-green-400 text-zinc-700" data-event="1"><span class="inline-block bg-green-500 text-white px-2 py-0.5 rounded text-[11px] mr-1 mb-2">09:00</span><span class="inline-block bg-green-500 text-white px-2 py-0.5 rounded text-[11px] mb-2">11:00</span><p>Hacka of Wars</p></div></div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <!-- 10:00 -->
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">10</div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell relative border-r border-b border-[#edf0f5] h-[78px]"><div class="event-card orange top-[74px] h-[80px] bg-orange-50 border-2 border-orange-400 text-zinc-700" data-event="2"><span class="inline-block bg-orange-500 text-white px-2 py-0.5 rounded text-[11px] mb-2">11:00</span><p>Copa do Mundo</p></div></div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell relative border-r border-b border-[#edf0f5] h-[78px]"><div class="event-card orange top-[2px] h-[145px] bg-orange-50 border-2 border-orange-400 text-zinc-700" data-event="3"><span class="inline-block bg-orange-500 text-white px-2 py-0.5 rounded text-[11px] mr-1 mb-2">11:00</span><span class="inline-block bg-orange-500 text-white px-2 py-0.5 rounded text-[11px] mb-2">15:00</span><p>Oficina</p></div></div>
+        <div class="cell relative border-r border-b border-[#edf0f5] h-[78px]"><div class="event-card yellow top-[2px] h-[230px] bg-yellow-50 border-2 border-yellow-400 text-zinc-700" data-event="4"><span class="inline-block bg-yellow-500 text-white px-2 py-0.5 rounded text-[11px] mr-1 mb-2">11:00</span><span class="inline-block bg-yellow-500 text-white px-2 py-0.5 rounded text-[11px] mb-2">13:00</span><p>Oficina</p></div></div>
+        <div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <!-- 11:00 -->
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">11</div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <!-- 12:00 -->
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">12</div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell relative border-r border-b border-[#edf0f5] h-[78px]"><div class="event-card purple top-[74px] h-[150px] bg-purple-50 border-2 border-purple-400 text-zinc-700" data-event="5"><span class="inline-block bg-purple-500 text-white px-2 py-0.5 rounded text-[11px] mr-1 mb-2">13:00</span><span class="inline-block bg-purple-500 text-white px-2 py-0.5 rounded text-[11px] mb-2">15:00</span><p>Evento de Palestra</p></div></div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell relative border-r border-b border-[#edf0f5] h-[78px]"><div class="event-card blue top-[74px] h-[80px] bg-sky-50 border-2 border-sky-400 text-zinc-700" data-event="6"><span class="inline-block bg-sky-500 text-white px-2 py-0.5 rounded text-[11px] mb-2">13:00</span><p>Evento de Aula</p></div></div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <!-- 13:00 -->
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">13</div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <!-- 14:00 -->
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">14</div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell relative border-r border-b border-[#edf0f5] h-[78px]"><div class="event-card pink top-[74px] h-[225px] bg-pink-50 border-2 border-pink-400 text-zinc-700" data-event="7"><span class="inline-block bg-pink-500 text-white px-2 py-0.5 rounded text-[11px] mr-1 mb-2">15:00</span><span class="inline-block bg-pink-500 text-white px-2 py-0.5 rounded text-[11px] mb-2">17:59</span><p>Palestra</p></div></div>
+        <div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <!-- 15 até 21 -->
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">15</div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">16</div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">17</div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">18</div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">19</div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell flex justify-center pt-3 font-bold border-r border-b border-[#edf0f5] h-[78px]">20</div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-b border-[#edf0f5] h-[78px]"></div><div class="cell border-b border-[#edf0f5] h-[78px]"></div>
+        <div class="cell flex justify-center pt-3 font-bold border-r border-[#edf0f5] h-[78px]">21</div><div class="cell border-r border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-[#edf0f5] h-[78px]"></div><div class="cell border-r border-[#edf0f5] h-[78px]"></div><div class="cell h-[78px]"></div>
+      </div>
+    </div>
+
+    <div id="view-week" style="display: none;" class="p-6 scrollable-view"></div>
+    <div id="view-day" style="display: none;" class="p-6 scrollable-view"></div>
+    <div id="view-year" style="display: none;" class="p-6 scrollable-view"></div>
+  </div>
+
+  <!-- Legenda etc. -->
+  <div class="col-span-12 lg:col-span-4 space-y-gutter">
+    <div class="bg-white border border-zinc-200 shadow-sm p-6 card-animated">
+      <h4 class="text-label-caps font-label-caps text-on-surface tracking-widest uppercase mb-6 border-b border-zinc-100 pb-2">Legenda de Atividades</h4>
+      <div class="space-y-4">
+        <div class="flex items-center gap-4"><div class="w-8 h-8 bg-tertiary-container/20 border-l-4 border-tertiary-container flex items-center justify-center"><span class="material-symbols-outlined text-tertiary text-sm">payments</span></div><div><p class="text-sm font-bold uppercase tracking-tight text-on-surface">Eventos Pagos</p><p class="text-xs text-secondary">Locações de estúdio e espaços privados</p></div></div>
+        <div class="flex items-center gap-4"><div class="w-8 h-8 bg-primary-container/20 border-l-4 border-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-primary text-sm">handyman</span></div><div><p class="text-sm font-bold uppercase tracking-tight text-on-surface">Workshops</p><p class="text-xs text-secondary">Treinamentos práticos e oficinas</p></div></div>
+        <div class="flex items-center gap-4"><div class="w-8 h-8 bg-blue-100 border-l-4 border-blue-600 flex items-center justify-center"><span class="material-symbols-outlined text-blue-600 text-sm">school</span></div><div><p class="text-sm font-bold uppercase tracking-tight text-on-surface">Aulas Regulares</p><p class="text-xs text-secondary">Disciplinas acadêmicas e cursos longos</p></div></div>
+      </div>
+    </div>
+    <div class="bg-zinc-900 text-white p-6 rounded-lg shadow-xl relative overflow-hidden card-animated">
+      <div class="relative z-10">
+        <div class="flex items-center justify-between mb-4"><div class="flex gap-2"><div class="w-8 h-8 bg-white/10 rounded flex items-center justify-center"><span class="material-symbols-outlined text-sm">mail</span></div><div class="w-8 h-8 bg-white/10 rounded flex items-center justify-center"><span class="material-symbols-outlined text-sm">groups</span></div></div><span class="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-0.5 border border-green-500/50 uppercase tracking-widest">Ativo</span></div>
+        <h3 class="text-white font-h3 text-h3 mb-2">Sincronização Ativa</h3>
+        <p class="text-zinc-400 text-sm mb-6">Todos os eventos do Pavilhão são replicados automaticamente no Teams e Outlook da coordenação.</p>
+        <button class="w-full bg-white text-zinc-900 py-2 font-label-caps text-label-caps uppercase tracking-widest hover:bg-zinc-200 transition-colors btn-scale">Configurar Sincronização</button>
+      </div>
+      <div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 blur-3xl rounded-full -mr-16 -mt-16"></div>
+    </div>
+    <div class="bg-surface-container-low border border-outline-variant p-6 flex items-start gap-4 card-animated">
+      <span class="material-symbols-outlined text-error">warning</span>
+      <div><p class="text-xs font-bold text-error uppercase tracking-widest mb-1">Manutenção Programada</p><p class="text-sm font-body-md text-on-surface-variant">A Router CNC estará indisponível no dia 15/11 para calibragem semestral.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- Próximas 24h -->
+<section class="mt-8">
+  <div class="flex items-center justify-between mb-6"><h3 class="text-h2 font-h2">Próximas 24 Horas</h3><a class="text-primary text-sm font-bold border-b border-primary hover:text-primary-container transition-all uppercase tracking-widest" href="#">Ver escala completa</a></div>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+    <div class="bg-white border border-zinc-200 p-4 hover:border-primary transition-all group card-animated"><p class="text-label-caps font-label-caps text-secondary mb-3 uppercase">09:00 - 12:00</p><h5 class="font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">Workshop Marcenaria Fina</h5><div class="flex items-center gap-2 text-xs text-secondary"><span class="material-symbols-outlined text-xs">location_on</span><span>Bancada 04, 05 e 06</span></div></div>
+    <div class="bg-white border border-zinc-200 p-4 hover:border-primary transition-all group card-animated"><p class="text-label-caps font-label-caps text-secondary mb-3 uppercase">14:00 - 17:00</p><h5 class="font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">Projeto Integrador I</h5><div class="flex items-center gap-2 text-xs text-secondary"><span class="material-symbols-outlined text-xs">location_on</span><span>Laboratório de Prototipagem</span></div></div>
+    <div class="bg-white border border-zinc-200 p-4 hover:border-primary transition-all group card-animated"><p class="text-label-caps font-label-caps text-secondary mb-3 uppercase">18:00 - 22:00</p><h5 class="font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">Locação: Estúdio Audiovisual</h5><div class="flex items-center gap-2 text-xs text-secondary"><span class="material-symbols-outlined text-xs">location_on</span><span>Estúdio A</span></div></div>
+    <div class="bg-zinc-50 border border-zinc-200 border-dashed p-4 flex flex-col justify-center items-center text-center opacity-70 card-animated"><span class="material-symbols-outlined text-secondary mb-2">add_circle</span><p class="text-label-caps font-label-caps text-secondary uppercase tracking-tighter">Horário Disponível</p></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="p-6 border-t border-zinc-200 text-center"><p class="text-label-caps font-label-caps text-secondary uppercase tracking-widest">Pavilhão Maker © 2024 — Sistema de Gestão de Infraestrutura</p></footer>
+</div>
+
+<!-- Modal de Evento (primeiro popup) -->
+<div class="modal-overlay" id="eventModal">
+  <div class="modal-content" id="modalContent">
+    <button id="openFormPopup" class="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600 btn-scale" title="Ver formulário completo">
+      <span class="material-symbols-outlined">description</span>
+    </button>
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-h3 font-h3" id="modalTitle">Evento</h3>
+      <button class="text-zinc-400 hover:text-zinc-600" id="closeModal"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="space-y-4">
+      <div><span class="text-label-caps font-label-caps text-secondary uppercase">Horário</span><p class="font-bold" id="modalTime">--</p></div>
+      <div><span class="text-label-caps font-label-caps text-secondary uppercase">Local</span><p id="modalPlace">--</p></div>
+      <div><span class="text-label-caps font-label-caps text-secondary uppercase">Descrição</span><p class="text-sm text-zinc-600" id="modalDesc">--</p></div>
+    </div>
+    <div class="flex justify-between mt-8">
+      <button class="btn-scale px-4 py-2 border border-zinc-300 rounded flex items-center gap-1" id="prevEvent"><span class="material-symbols-outlined">arrow_back</span> Anterior</button>
+      <button class="btn-scale px-4 py-2 border border-zinc-300 rounded flex items-center gap-1" id="nextEvent">Próximo <span class="material-symbols-outlined">arrow_forward</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Segundo Modal (Formulário completo) -->
+<div class="form-popup-overlay" id="formPopupOverlay">
+  <div class="form-popup-content" id="formPopupContent">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-h3 font-h3" id="formPopupTitle">Formulário do Evento</h3>
+      <button class="text-zinc-400 hover:text-zinc-600" id="closeFormPopup"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div id="formPopupBody" class="space-y-4 text-sm"></div>
+  </div>
+</div>
+
+<script>
+// Dados dos eventos
+const eventsData = [
+  { id: 1, title: 'Hacka of Wars', time: '09:00 - 11:00', place: 'Laboratório de Inovação', desc: 'Competição de hacking e desenvolvimento.', color: 'green', date: '2024-11-12' },
+  { id: 2, title: 'Copa do Mundo', time: '11:00 - 12:00', place: 'Auditório Principal', desc: 'Transmissão e discussão dos jogos.', color: 'orange', date: '2024-11-13' },
+  { id: 3, title: 'Oficina', time: '11:00 - 15:00', place: 'Sala Maker 1', desc: 'Oficina prática de prototipagem.', color: 'orange', date: '2024-11-14' },
+  { id: 4, title: 'Oficina', time: '11:00 - 13:00', place: 'Sala Maker 2', desc: 'Introdução à marcenaria.', color: 'yellow', date: '2024-11-15' },
+  { id: 5, title: 'Evento de Palestra', time: '13:00 - 15:00', place: 'Auditório', desc: 'Palestra sobre inovação tecnológica.', color: 'purple', date: '2024-11-13' },
+  { id: 6, title: 'Evento de Aula', time: '13:00 - 14:00', place: 'Sala 404', desc: 'Aula especial de design.', color: 'blue', date: '2024-11-14' },
+  { id: 7, title: 'Palestra', time: '15:00 - 17:59', place: 'Auditório', desc: 'Palestra motivacional.', color: 'pink', date: '2024-11-15' }
+];
+
+// Dados dos formulários
+const formDataMap = {
+  1: { tipo: 'maker', fields: [
+      { label: '1. Email', value: 'joao.silva@unicap.br' },
+      { label: '2. Nome do solicitante', value: 'João Silva' },
+      { label: '3. Celular do solicitante', value: '(81) 99999-0001' },
+      { label: '4. Pavilhão Maker', value: 'Espaço Maker' },
+      { label: '5. Maquinário', value: 'Cortadora a laser' },
+      { label: '6. Professor solicitante', value: 'Prof. Ricardo' },
+      { label: '7. Destino do projeto', value: 'Desenvolvimento de software' },
+      { label: '8. Turma', value: '3º período / Turma A' },
+      { label: '9. Data de utilização', value: '12/11/2024' },
+      { label: '10. Horário de início', value: '09:00' },
+      { label: '11. Horário de finalização', value: '11:00' }
+  ]},
+  2: { tipo: 'pavilhao', fields: [
+      { label: '1. Email', value: 'maria.santos@unicap.br' },
+      { label: '2. Nome do solicitante', value: 'Maria Santos' },
+      { label: '3. Celular do solicitante', value: '(81) 99999-0002' },
+      { label: '4. Pavilhão Maker', value: 'Espaço Pavilhão (Lounge/Co-Work)' },
+      { label: '5. Nome do evento', value: 'Copa do Mundo' },
+      { label: '6. Descrição do evento', value: 'Transmissão e discussão dos jogos.' },
+      { label: '7. Quantidade de participantes', value: '50' },
+      { label: '8. Data do evento', value: '13/11/2024' },
+      { label: '9. Horário de início', value: '11:00' },
+      { label: '10. Horário de finalização', value: '12:00' }
+  ]},
+  3: { tipo: 'maker', fields: [
+      { label: '1. Email', value: 'pedro.alves@unicap.br' },
+      { label: '2. Nome do solicitante', value: 'Pedro Alves' },
+      { label: '3. Celular do solicitante', value: '(81) 99999-0003' },
+      { label: '4. Pavilhão Maker', value: 'Espaço Maker' },
+      { label: '5. Maquinário', value: 'Impressora 3D' },
+      { label: '6. Professor solicitante', value: 'Profa. Ana' },
+      { label: '7. Destino do projeto', value: 'Prototipagem rápida' },
+      { label: '8. Turma', value: '4º período / Turma B' },
+      { label: '9. Data de utilização', value: '14/11/2024' },
+      { label: '10. Horário de início', value: '11:00' },
+      { label: '11. Horário de finalização', value: '15:00' }
+  ]},
+  4: { tipo: 'pavilhao', fields: [
+      { label: '1. Email', value: 'ana.costa@unicap.br' },
+      { label: '2. Nome do solicitante', value: 'Ana Costa' },
+      { label: '3. Celular do solicitante', value: '(81) 99999-0004' },
+      { label: '4. Pavilhão Maker', value: 'Espaço Pavilhão (Lounge/Co-Work)' },
+      { label: '5. Nome do evento', value: 'Oficina de Marcenaria' },
+      { label: '6. Descrição do evento', value: 'Introdução à marcenaria.' },
+      { label: '7. Quantidade de participantes', value: '20' },
+      { label: '8. Data do evento', value: '15/11/2024' },
+      { label: '9. Horário de início', value: '11:00' },
+      { label: '10. Horário de finalização', value: '13:00' }
+  ]},
+  5: { tipo: 'pavilhao', fields: [
+      { label: '1. Email', value: 'carlos.edu@unicap.br' },
+      { label: '2. Nome do solicitante', value: 'Carlos Eduardo' },
+      { label: '3. Celular do solicitante', value: '(81) 99999-0005' },
+      { label: '4. Pavilhão Maker', value: 'Espaço Pavilhão (Lounge/Co-Work)' },
+      { label: '5. Nome do evento', value: 'Palestra Inovação' },
+      { label: '6. Descrição do evento', value: 'Palestra sobre inovação tecnológica.' },
+      { label: '7. Quantidade de participantes', value: '80' },
+      { label: '8. Data do evento', value: '13/11/2024' },
+      { label: '9. Horário de início', value: '13:00' },
+      { label: '10. Horário de finalização', value: '15:00' }
+  ]},
+  6: { tipo: 'maker', fields: [
+      { label: '1. Email', value: 'julia.lima@unicap.br' },
+      { label: '2. Nome do solicitante', value: 'Júlia Lima' },
+      { label: '3. Celular do solicitante', value: '(81) 99999-0006' },
+      { label: '4. Pavilhão Maker', value: 'Espaço Maker' },
+      { label: '5. Maquinário', value: 'Router CNC' },
+      { label: '6. Professor solicitante', value: 'Prof. Alan' },
+      { label: '7. Destino do projeto', value: 'Aula especial de design' },
+      { label: '8. Turma', value: '2º período / Turma C' },
+      { label: '9. Data de utilização', value: '14/11/2024' },
+      { label: '10. Horário de início', value: '13:00' },
+      { label: '11. Horário de finalização', value: '14:00' }
+  ]},
+  7: { tipo: 'pavilhao', fields: [
+      { label: '1. Email', value: 'ricardo.m@unicap.br' },
+      { label: '2. Nome do solicitante', value: 'Ricardo Martins' },
+      { label: '3. Celular do solicitante', value: '(81) 99999-0007' },
+      { label: '4. Pavilhão Maker', value: 'Espaço Pavilhão (Lounge/Co-Work)' },
+      { label: '5. Nome do evento', value: 'Palestra Motivacional' },
+      { label: '6. Descrição do evento', value: 'Palestra motivacional.' },
+      { label: '7. Quantidade de participantes', value: '60' },
+      { label: '8. Data do evento', value: '15/11/2024' },
+      { label: '9. Horário de início', value: '15:00' },
+      { label: '10. Horário de finalização', value: '18:00' }
+  ]}
+};
+
+const colorMap = {
+  green: { border: '#4ade80', bg: 'white' },
+  orange: { border: '#fb923c', bg: 'white' },
+  yellow: { border: '#facc15', bg: 'white' },
+  purple: { border: '#c084fc', bg: 'white' },
+  blue: { border: '#60a5fa', bg: 'white' },
+  pink: { border: '#f472b6', bg: 'white' }
+};
+
+let currentEventIndex = 0;
+let currentDate = new Date(2024, 10, 12);
+let currentView = 'month';
+
+const calendarTitle = document.getElementById('calendar-title');
+const viewMonth = document.getElementById('view-month');
+const viewWeek = document.getElementById('view-week');
+const viewDay = document.getElementById('view-day');
+const viewYear = document.getElementById('view-year');
+const viewButtons = document.querySelectorAll('.view-btn');
+
+document.getElementById('prevBtn').addEventListener('click', () => changeDate(-1));
+document.getElementById('nextBtn').addEventListener('click', () => changeDate(1));
+
+function changeDate(delta) {
+  switch (currentView) {
+    case 'month': currentDate.setMonth(currentDate.getMonth() + delta); break;
+    case 'week': currentDate.setDate(currentDate.getDate() + delta * 7); break;
+    case 'day': currentDate.setDate(currentDate.getDate() + delta); break;
+    case 'year': currentDate.setFullYear(currentDate.getFullYear() + delta); break;
+  }
+  updateView();
+}
+
+function updateView() {
+  switch (currentView) {
+    case 'month':
+      calendarTitle.textContent = currentDate.toLocaleDateString('pt-BR', { year: 'numeric', month: 'long' });
+      break;
+    case 'week': {
+      const start = new Date(currentDate);
+      start.setDate(currentDate.getDate() - currentDate.getDay() + 1);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      calendarTitle.textContent = `${start.getDate()}-${end.getDate()} de ${start.toLocaleDateString('pt-BR', { month: 'long' })} ${start.getFullYear()}`;
+      break;
+    }
+    case 'day':
+      calendarTitle.textContent = currentDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      break;
+    case 'year':
+      calendarTitle.textContent = currentDate.getFullYear();
+      break;
+  }
+  renderCurrentView();
+}
+
+function renderCurrentView() {
+  viewMonth.style.display = 'none';
+  viewWeek.style.display = 'none';
+  viewDay.style.display = 'none';
+  viewYear.style.display = 'none';
+
+  const container = document.getElementById(`view-${currentView}`);
+  if (!container) return;
+  container.style.display = 'block';
+
+  if (currentView === 'month') {
+    attachEventListenersToCards();
+    return;
+  }
+
+  let filtered = [];
+  if (currentView === 'week') {
+    const day = currentDate.getDay();
+    const monday = new Date(currentDate);
+    monday.setDate(currentDate.getDate() - (day === 0 ? 6 : day - 1));
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    filtered = eventsData.filter(ev => {
+      const d = new Date(ev.date + 'T00:00:00');
+      return d >= monday && d <= sunday;
+    });
+  } else if (currentView === 'day') {
+    const dateStr = currentDate.toISOString().split('T')[0];
+    filtered = eventsData.filter(ev => ev.date === dateStr);
+  } else if (currentView === 'year') {
+    const year = currentDate.getFullYear();
+    filtered = eventsData.filter(ev => new Date(ev.date).getFullYear() === year);
+  }
+
+  let html = '';
+  if (filtered.length === 0) {
+    html = '<p class="text-zinc-500 italic">Nenhum evento neste período.</p>';
+  } else {
+    html = '<ul class="space-y-3">';
+    filtered.forEach(ev => {
+      html += `
+        <li class="p-4 border-l-4 rounded bg-white shadow-sm cursor-pointer transition hover:scale-[1.02] hover:shadow-md" style="border-color: ${colorMap[ev.color]?.border || '#ccc'}" data-event="${ev.id}">
+          <div class="flex justify-between">
+            <span class="font-bold">${ev.title}</span>
+            <span class="text-sm text-zinc-500">${ev.time}</span>
+          </div>
+          <p class="text-xs text-zinc-600">${ev.place}</p>
+        </li>`;
+    });
+    html += '</ul>';
+  }
+  container.innerHTML = html;
+  attachEventListenersToCards();
+}
+
+function attachEventListenersToCards() {
+  document.querySelectorAll('.event-card').forEach(card => {
+    if (card.dataset.listenerAttached) return;
+    card.dataset.listenerAttached = 'true';
+    card.addEventListener('click', function(e) {
+      if (e.detail === 1) {
+        this.classList.add('animate-pulse-event');
+        setTimeout(() => this.classList.remove('animate-pulse-event'), 400);
+      }
+    });
+    card.addEventListener('dblclick', function(e) {
+      const eventId = parseInt(this.dataset.event);
+      const event = eventsData.find(ev => ev.id === eventId);
+      if (event) {
+        currentEventIndex = eventsData.indexOf(event);
+        updateModal(event);
+        document.getElementById('eventModal').classList.add('active');
+      }
+    });
+  });
+
+  document.querySelectorAll('#view-week li[data-event], #view-day li[data-event], #view-year li[data-event]').forEach(item => {
+    if (item.dataset.listenerAttached) return;
+    item.dataset.listenerAttached = 'true';
+    item.addEventListener('click', function(e) {
+      if (e.detail === 1) {
+        this.classList.add('animate-pulse-event');
+        setTimeout(() => this.classList.remove('animate-pulse-event'), 400);
+      }
+    });
+    item.addEventListener('dblclick', function(e) {
+      const eventId = parseInt(this.dataset.event);
+      const event = eventsData.find(ev => ev.id === eventId);
+      if (event) {
+        currentEventIndex = eventsData.indexOf(event);
+        updateModal(event);
+        document.getElementById('eventModal').classList.add('active');
+      }
+    });
+  });
+}
+
+viewButtons.forEach(btn => {
+  btn.addEventListener('click', function() {
+    currentView = this.dataset.view;
+    viewButtons.forEach(b => b.classList.remove('bg-zinc-900', 'text-white'));
+    this.classList.add('bg-zinc-900', 'text-white');
+    updateView();
+  });
+});
+
+document.getElementById('todayBtn').addEventListener('click', () => {
+  currentDate = new Date(2024, 10, 12);
+  updateView();
+});
+
+// Modal principal
+function applyModalStyle(event) {
+  const modal = document.getElementById('modalContent');
+  if (event.color && colorMap[event.color]) {
+    modal.style.borderColor = colorMap[event.color].border;
+    modal.style.backgroundColor = 'white';
+    modal.style.borderWidth = '4px';
+  } else {
+    modal.style.borderColor = '#ccc';
+    modal.style.backgroundColor = 'white';
+  }
+}
+function updateModal(event) {
+  document.getElementById('modalTitle').textContent = event.title;
+  document.getElementById('modalTime').textContent = event.time;
+  document.getElementById('modalPlace').textContent = event.place;
+  document.getElementById('modalDesc').textContent = event.desc;
+  applyModalStyle(event);
+  document.getElementById('openFormPopup').dataset.eventId = event.id;
+}
+document.getElementById('prevEvent').addEventListener('click', () => {
+  if (currentEventIndex > 0) {
+    currentEventIndex--;
+    updateModal(eventsData[currentEventIndex]);
+  }
+});
+document.getElementById('nextEvent').addEventListener('click', () => {
+  if (currentEventIndex < eventsData.length - 1) {
+    currentEventIndex++;
+    updateModal(eventsData[currentEventIndex]);
+  }
+});
+function closeModal() { document.getElementById('eventModal').classList.remove('active'); }
+document.getElementById('closeModal').addEventListener('click', closeModal);
+document.getElementById('eventModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+// Abrir segundo popup (formulário) com efeito 3D
+document.getElementById('openFormPopup').addEventListener('click', function(e) {
+  e.stopPropagation();
+  const eventId = parseInt(this.dataset.eventId);
+  const formData = formDataMap[eventId];
+  if (!formData) return;
+
+  const eventModal = document.getElementById('eventModal');
+  eventModal.classList.add('stacked');
+
+  const body = document.getElementById('formPopupBody');
+  let html = '';
+  formData.fields.forEach(field => {
+    html += `<div><span class="text-label-caps font-label-caps text-secondary uppercase">${field.label}</span><p class="font-bold">${field.value}</p></div>`;
+  });
+  body.innerHTML = html;
+
+  const event = eventsData.find(ev => ev.id === eventId);
+  const formContent = document.getElementById('formPopupContent');
+  if (event && colorMap[event.color]) {
+    formContent.style.borderColor = colorMap[event.color].border;
+  }
+
+  document.getElementById('formPopupOverlay').classList.add('active');
+});
+
+function closeFormPopup() {
+  document.getElementById('formPopupOverlay').classList.remove('active');
+  document.getElementById('eventModal').classList.remove('stacked');
+}
+document.getElementById('closeFormPopup').addEventListener('click', closeFormPopup);
+document.getElementById('formPopupOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeFormPopup();
+});
+
+updateView();
+</script>
+
+</body>
+</html>

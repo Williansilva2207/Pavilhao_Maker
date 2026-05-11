@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html class="light" lang="pt-br"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+darkMode: "class",
+theme: {
+extend: {
+"colors": {
+"on-tertiary": "#ffffff",
+"primary": "#8b5000",
+"surface-container-lowest": "#ffffff",
+"outline-variant": "#dbc2ad",
+"surface-container-highest": "#e2e2e3",
+"on-error": "#ffffff",
+"primary-container": "#ff9800",
+"secondary-container": "#e2dfde",
+"on-tertiary-fixed": "#261a00",
+"surface-container-low": "#f3f3f4",
+"on-primary": "#ffffff",
+"inverse-on-surface": "#f0f1f2",
+"tertiary-fixed": "#ffdfa0",
+"on-primary-fixed": "#2c1600",
+"on-surface-variant": "#554434",
+"on-tertiary-fixed-variant": "#5c4300",
+"surface-variant": "#e2e2e3",
+"error": "#ba1a1a",
+"inverse-primary": "#ffb870",
+"surface-dim": "#dadadb",
+"on-secondary-container": "#636262",
+"tertiary-fixed-dim": "#fbbc00",
+"on-secondary-fixed-variant": "#474746",
+"on-tertiary-container": "#584000",
+"primary-fixed": "#ffdcbe",
+"background": "#f9f9fa",
+"primary-fixed-dim": "#ffb870",
+"on-background": "#1a1c1d",
+"secondary": "#5f5e5e",
+"tertiary-container": "#e0a800",
+"on-secondary-fixed": "#1b1b1c",
+"on-secondary": "#ffffff",
+"tertiary": "#795900",
+"on-surface": "#1a1c1d",
+"error-container": "#ffdad6",
+"on-primary-fixed-variant": "#693c00",
+"surface-container": "#eeeeef",
+"surface": "#f9f9fa",
+"surface-bright": "#f9f9fa",
+"outline": "#887361",
+"inverse-surface": "#2f3132",
+"surface-container-high": "#e8e8e9",
+"on-primary-container": "#653900",
+"on-error-container": "#93000a",
+"secondary-fixed": "#e5e2e1",
+"surface-tint": "#8b5000",
+"secondary-fixed-dim": "#c8c6c5"
+},
+"borderRadius": {
+"DEFAULT": "0.125rem",
+"lg": "0.25rem",
+"xl": "0.5rem",
+"full": "0.75rem"
+},
+"spacing": {
+"gutter": "24px",
+"base": "8px",
+"margin": "32px",
+"sidebar-width": "280px"
+},
+"fontFamily": {
+"h1": ["Space Grotesk"],
+"mono-label": ["monospace"],
+"body-lg": ["Inter"],
+"h2": ["Space Grotesk"],
+"body-md": ["Inter"],
+"h3": ["Space Grotesk"],
+"label-caps": ["Inter"]
+},
+"fontSize": {
+"h1": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+"mono-label": ["14px", {"lineHeight": "1", "fontWeight": "500"}],
+"body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+"h2": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+"body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+"h3": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+"label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}]
+}
+}
+}
+}
+</script>
+
+<style>
+body { font-family: 'Inter', sans-serif; background-color: #f9f9fa; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+.industrial-grid { background-image: radial-gradient(#e2e2e3 1px, transparent 1px); background-size: 24px 24px; }
+
+/* ========= ANIMAÇÕES ========= */
+
+/* Título "PAVILHÃO MAKER" na sidebar */
+.sidebar-title {
+  transition: transform 0.3s ease, letter-spacing 0.3s ease;
+  display: inline-block;
+}
+.sidebar-title:hover {
+  transform: translateY(-3px);
+  letter-spacing: 0.05em;
+}
+
+/* Título "Painel de Triagem" no header */
+.header-title {
+  transition: transform 0.25s ease, color 0.25s ease;
+  display: inline-block;
+}
+.header-title:hover {
+  transform: translateY(-2px);
+  color: #c95a5a;
+}
+
+/* Itens do menu lateral com onda + escala gordinha */
+.nav-link {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.nav-link:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+.nav-link:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Cards da lista com onda + escala gordinha */
+.request-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.request-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+.request-card::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.02);
+  transform: translate(-50%, -50%);
+  transition: width 0.7s ease, height 0.7s ease;
+}
+.request-card:hover::after {
+  width: 400px;
+  height: 400px;
+}
+
+/* Avatar com efeito de escala e sombra */
+.avatar-container {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.avatar-container:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* Botões com efeito de escala (gordinho) */
+.btn-scale {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-scale:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+.btn-scale:active {
+  transform: scale(0.97);
+}
+</style>
+</head>
+
+<body class="bg-background text-on-background">
+
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 border-r border-zinc-800 bg-[#1e1e1e] shadow-xl flex flex-col py-6 z-50">
+  <div class="px-6 mb-10">
+    <h1 class="text-lg font-black text-white uppercase tracking-wider font-['Space_Grotesk'] sidebar-title">Pavilhão Maker</h1>
+    <div class="flex items-center gap-2 mt-4 p-2 bg-zinc-800/50 rounded border border-zinc-700/50">
+      <span class="material-symbols-outlined text-green-500 text-sm">sync</span>
+      <span class="text-[10px] font-['Space_Grotesk'] uppercase tracking-widest text-zinc-400">Outlook Synced</span>
+    </div>
+  </div>
+  <nav class="flex-1 px-2 space-y-1">
+    <a class="bg-zinc-800 text-white border-l-4 border-orange-500 px-4 py-3 flex items-center gap-3 font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="#">
+      <span class="material-symbols-outlined">fact_check</span>
+      <span>Triagem</span>
+    </a>
+    <a class="text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-4 py-3 flex items-center gap-3 transition-all font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="#">
+      <span class="material-symbols-outlined">add_box</span>
+      <span>Nova Solicitação</span>
+    </a>
+    <a class="text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-4 py-3 flex items-center gap-3 transition-all font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="#">
+      <span class="material-symbols-outlined">calendar_today</span>
+      <span>Calendário</span>
+    </a>
+    <a class="text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-4 py-3 flex items-center gap-3 transition-all font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="#">
+      <span class="material-symbols-outlined">settings</span>
+      <span>Configurações</span>
+    </a>
+  </nav>
+  <div class="px-6 mt-auto">
+    <div class="flex items-center gap-3 p-3 bg-zinc-800/30 rounded border border-zinc-800 avatar-container cursor-pointer">
+      <img class="w-10 h-10 rounded-full object-cover" data-alt="Professional portrait of a male workshop coordinator wearing a dark apron in a bright industrial maker space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUFPLwSuXzL_Ffs3hvOpIm8tyCKYE-lR8tu8nsHFJShHOkdOqt40AQ7kb3UshJZjb57JlWcnQn6IL4OU51tl7LivMckng3ISysfVt3xkX4DEMi7z2HDgK3XUsUL1fGz-BYixhKg7vswNe7OO62UPzbMaQPX027Z3KE90DVcfVeMxzBo2-oHhcFvuBUi876ujqT-JYhMtgmwTXFVH9Em2N3R676Pcn75I7IDB142jvhY9PSU8dUOIqesqV1BZgxDzV0cEQi0P76-eU"/>
+      <div>
+        <p class="text-xs font-bold text-white uppercase font-['Space_Grotesk']">Admin Maker</p>
+        <p class="text-[10px] text-zinc-500 uppercase">Supervisor</p>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main class="ml-64 min-h-screen industrial-grid">
+
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-8 h-16 bg-white border-b border-zinc-200 sticky top-0 z-40">
+  <div class="flex items-center gap-4">
+    <h2 class="font-h3 text-h3 text-zinc-900 header-title">Painel de Triagem</h2>
+    <span class="px-2 py-1 bg-surface-container text-zinc-500 font-mono-label text-[10px] border border-zinc-200">BETA V2.4</span>
+  </div>
+  <div class="flex items-center gap-6">
+    <div class="relative flex items-center">
+      <span class="material-symbols-outlined absolute left-3 text-zinc-400">search</span>
+      <input class="pl-10 pr-4 py-2 bg-surface-container-low border border-zinc-200 focus:border-primary focus:ring-0 text-sm font-body-md w-64 transition-all" placeholder="Procurar solicitação..." type="text"/>
+    </div>
+    <button class="text-zinc-500 hover:text-primary transition-colors cursor-pointer">
+      <span class="material-symbols-outlined">notifications</span>
+    </button>
+  </div>
+</header>
+
+<!-- Page Content -->
+<div class="p-8">
+
+<!-- Filters & Stats Row -->
+<div class="flex flex-col md:flex-row justify-between items-end gap-4 mb-8">
+  <div class="flex gap-4">
+    <div class="space-y-1">
+      <label class="font-label-caps text-label-caps text-on-surface-variant">TIPO DE ATIVIDADE</label>
+      <select class="block w-48 border border-zinc-200 bg-white text-sm font-body-md px-3 py-2 rounded-sm focus:border-primary focus:ring-0">
+        <option>Todos os tipos</option>
+        <option>Eventos Pagos</option>
+        <option>Workshops</option>
+        <option>Aulas</option>
+      </select>
+    </div>
+    <div class="space-y-1">
+      <label class="font-label-caps text-label-caps text-on-surface-variant">STATUS</label>
+      <select class="block w-48 border border-zinc-200 bg-white text-sm font-body-md px-3 py-2 rounded-sm focus:border-primary focus:ring-0">
+        <option>Pendentes</option>
+        <option>Aprovados</option>
+        <option>Rejeitados</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex gap-8 border-l border-zinc-200 pl-8">
+    <div class="text-right">
+      <p class="font-label-caps text-label-caps text-on-surface-variant">TOTAL PENDENTE</p>
+      <p class="font-h3 text-h3 text-primary">12</p>
+    </div>
+    <div class="text-right">
+      <p class="font-label-caps text-label-caps text-on-surface-variant">URGÊNCIA ALTA</p>
+      <p class="font-h3 text-h3 text-error">03</p>
+    </div>
+  </div>
+</div>
+
+<!-- Requests List -->
+<div class="space-y-4">
+
+<!-- 1. Paid Event - URGENT -->
+<div class="bg-white border-2 border-error/20 rounded-sm shadow-sm hover:shadow-md transition-shadow relative overflow-hidden request-card">
+  <div class="absolute left-0 top-0 bottom-0 w-1 bg-error"></div>
+  <div class="p-5 flex items-center justify-between">
+    <div class="flex items-center gap-6 flex-1">
+      <div class="w-12 h-12 flex items-center justify-center bg-error-container text-error rounded-sm">
+        <span class="material-symbols-outlined text-2xl">priority_high</span>
+      </div>
+      <div class="grid grid-cols-4 gap-8 flex-1">
+        <div class="col-span-1">
+          <span class="px-2 py-0.5 bg-[#FFD700]/20 text-[#8B6508] font-label-caps text-[10px] rounded border border-[#FFD700]/40">EVENTO PAGO</span>
+          <h4 class="font-h3 text-lg text-zinc-900 mt-1">Startup Summit</h4>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">REQUISITANTE</p>
+          <div class="flex items-center gap-2">
+            <p class="font-body-md text-sm font-semibold">John Doe</p>
+            <span class="material-symbols-outlined text-green-500 text-lg cursor-pointer">chat</span>
+          </div>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">HORÁRIO</p>
+          <p class="font-body-md text-sm flex items-center gap-1"><span class="material-symbols-outlined text-xs">schedule</span> 14:00</p>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">STATUS</p>
+          <span class="flex items-center gap-1 text-sm font-medium text-amber-600">
+            <span class="w-2 h-2 rounded-full bg-amber-600"></span> Pendente
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button class="px-4 py-2 border border-zinc-200 text-error hover:bg-error-container transition-colors font-label-caps text-xs btn-scale">REJEITAR</button>
+      <button class="px-4 py-2 bg-primary text-white hover:bg-primary/90 transition-colors font-label-caps text-xs btn-scale">APROVAR</button>
+    </div>
+  </div>
+  <div class="bg-error/5 px-5 py-2 flex justify-between items-center border-t border-error/10">
+    <span class="text-[10px] font-bold text-error uppercase tracking-widest flex items-center gap-1">
+      <span class="material-symbols-outlined text-[12px]">warning</span> URGENTE: Solicitação enviada há menos de 2h do evento
+    </span>
+    <span class="text-[10px] text-error/60 font-mono-label">REF: EVT-9921</span>
+  </div>
+</div>
+
+<!-- 2. Workshop -->
+<div class="bg-white border border-zinc-200 rounded-sm shadow-sm hover:border-primary-container transition-all request-card">
+  <div class="p-5 flex items-center justify-between">
+    <div class="flex items-center gap-6 flex-1">
+      <div class="w-12 h-12 flex items-center justify-center bg-primary-container/10 text-primary-container rounded-sm">
+        <span class="material-symbols-outlined text-2xl">handyman</span>
+      </div>
+      <div class="grid grid-cols-4 gap-8 flex-1">
+        <div class="col-span-1">
+          <span class="px-2 py-0.5 bg-primary-container/20 text-on-primary-container font-label-caps text-[10px] rounded border border-primary-container/40">WORKSHOP</span>
+          <h4 class="font-h3 text-lg text-zinc-900 mt-1">Marcenaria Básica</h4>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">REQUISITANTE</p>
+          <div class="flex items-center gap-2">
+            <p class="font-body-md text-sm font-semibold">Jane Smith</p>
+            <span class="material-symbols-outlined text-green-500 text-lg cursor-pointer">chat</span>
+          </div>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">HORÁRIO</p>
+          <p class="font-body-md text-sm flex items-center gap-1"><span class="material-symbols-outlined text-xs">schedule</span> 09:00</p>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">STATUS</p>
+          <span class="flex items-center gap-1 text-sm font-medium text-amber-600">
+            <span class="w-2 h-2 rounded-full bg-amber-600"></span> Pendente
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button class="px-4 py-2 border border-zinc-200 text-zinc-500 hover:bg-zinc-50 transition-colors font-label-caps text-xs btn-scale">REJEITAR</button>
+      <button class="px-4 py-2 bg-primary text-white hover:bg-primary/90 transition-colors font-label-caps text-xs btn-scale">APROVAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- 3. Class -->
+<div class="bg-white border border-zinc-200 rounded-sm shadow-sm hover:border-tertiary-container transition-all request-card">
+  <div class="p-5 flex items-center justify-between">
+    <div class="flex items-center gap-6 flex-1">
+      <div class="w-12 h-12 flex items-center justify-center bg-tertiary-container/10 text-tertiary-container rounded-sm">
+        <span class="material-symbols-outlined text-2xl">school</span>
+      </div>
+      <div class="grid grid-cols-4 gap-8 flex-1">
+        <div class="col-span-1">
+          <span class="px-2 py-0.5 bg-blue-100 text-blue-700 font-label-caps text-[10px] rounded border border-blue-200">AULA</span>
+          <h4 class="font-h3 text-lg text-zinc-900 mt-1">Design Thinking 101</h4>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">REQUISITANTE</p>
+          <div class="flex items-center gap-2">
+            <p class="font-body-md text-sm font-semibold">Prof. Alan</p>
+            <span class="material-symbols-outlined text-green-500 text-lg cursor-pointer">chat</span>
+          </div>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">HORÁRIO</p>
+          <p class="font-body-md text-sm flex items-center gap-1"><span class="material-symbols-outlined text-xs">schedule</span> 11:00</p>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">STATUS</p>
+          <span class="flex items-center gap-1 text-sm font-medium text-blue-600">
+            <span class="w-2 h-2 rounded-full bg-blue-600"></span> Em Revisão
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button class="px-4 py-2 border border-zinc-200 text-zinc-500 hover:bg-zinc-50 transition-colors font-label-caps text-xs btn-scale">REJEITAR</button>
+      <button class="px-4 py-2 bg-primary text-white hover:bg-primary/90 transition-colors font-label-caps text-xs btn-scale">APROVAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- 4. Workshop - Another Example -->
+<div class="bg-white border border-zinc-200 rounded-sm shadow-sm hover:border-primary-container transition-all request-card">
+  <div class="p-5 flex items-center justify-between">
+    <div class="flex items-center gap-6 flex-1">
+      <div class="w-12 h-12 flex items-center justify-center bg-primary-container/10 text-primary-container rounded-sm">
+        <span class="material-symbols-outlined text-2xl">biotech</span>
+      </div>
+      <div class="grid grid-cols-4 gap-8 flex-1">
+        <div class="col-span-1">
+          <span class="px-2 py-0.5 bg-primary-container/20 text-on-primary-container font-label-caps text-[10px] rounded border border-primary-container/40">WORKSHOP</span>
+          <h4 class="font-h3 text-lg text-zinc-900 mt-1">Impressão 3D Avançada</h4>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">REQUISITANTE</p>
+          <div class="flex items-center gap-2">
+            <p class="font-body-md text-sm font-semibold">Eng. Ricardo</p>
+            <span class="material-symbols-outlined text-green-500 text-lg cursor-pointer">chat</span>
+          </div>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">HORÁRIO</p>
+          <p class="font-body-md text-sm flex items-center gap-1"><span class="material-symbols-outlined text-xs">schedule</span> 16:30</p>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">STATUS</p>
+          <span class="flex items-center gap-1 text-sm font-medium text-amber-600">
+            <span class="w-2 h-2 rounded-full bg-amber-600"></span> Pendente
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button class="px-4 py-2 border border-zinc-200 text-zinc-500 hover:bg-zinc-50 transition-colors font-label-caps text-xs btn-scale">REJEITAR</button>
+      <button class="px-4 py-2 bg-primary text-white hover:bg-primary/90 transition-colors font-label-caps text-xs btn-scale">APROVAR</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Empty State / Footer hint -->
+<div class="mt-12 text-center p-8 border border-dashed border-zinc-300 rounded-sm">
+  <p class="text-on-surface-variant font-body-md text-sm italic">Fim das solicitações pendentes para hoje.</p>
+  <button class="mt-4 text-primary font-label-caps text-xs flex items-center justify-center gap-1 mx-auto hover:underline">
+    <span class="material-symbols-outlined text-sm">history</span> VER HISTÓRICO DE TRIAGEM
+  </button>
+</div>
+
+</div>
+
+</main>
+
+<!-- Contextual FAB -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
+  <span class="material-symbols-outlined text-3xl">add</span>
+</button>
+
+</body></html>

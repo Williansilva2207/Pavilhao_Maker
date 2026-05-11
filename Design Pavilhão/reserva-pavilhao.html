@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+
+<html lang="pt-br" class="light">
+
+<head>
+
+<meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Pavilhão Maker - Solicitação com Calendário Interativo</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+<script>
+
+tailwind.config = {
+
+theme: { extend: {
+
+colors: { primary: "#8b5000", darkSide: "#1e1e1e" },
+
+fontFamily: { inter: ["Inter", "sans-serif"], space: ["Space Grotesk", "sans-serif"] }
+
+} }
+
+}
+
+</script>
+
+<style>
+
+/* Todos os seus estilos originais - mantidos intactos */
+
+body { font-family: 'Inter', sans-serif; background-color: #f9f9fa; }
+
+.industrial-grid { background-image: radial-gradient(#e2e2e3 1px, transparent 1px); background-size: 24px 24px; }
+
+.form-card-hover { transition: transform 0.35s ease, box-shadow 0.35s ease; }
+
+.form-card-hover:hover { transform: translateY(-6px); box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6); }
+
+.input-hover { transition: all 0.3s ease; }
+
+.input-hover:hover { background-color: #ffffff; box-shadow: 0 0 20px rgba(255, 180, 180, 0.7); }
+
+.input-hover:focus { background-color: #ffffff; box-shadow: 0 0 25px rgba(255, 120, 120, 0.8); outline: none; }
+
+.label-hover { transition: transform 0.2s ease, color 0.2s ease; display: inline-block; }
+
+.label-hover:hover { transform: translateX(4px); color: #ffe0e0; }
+
+.card-option { transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease; }
+
+.card-option:hover { transform: translateY(-6px); }
+
+.btn-hover { transition: all 0.3s ease; }
+
+.btn-hover:hover { transform: translateY(-3px); box-shadow: 0 20px 30px rgba(0,0,0,0.4); }
+
+.btn-hover:active { transform: scale(0.96); }
+
+.hero-icon { transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s; }
+
+.hero-header:hover .hero-icon-main { transform: scale(1.08) rotate(3deg); }
+
+.hero-header:hover .hero-badge { transform: translate(4px, -4px) rotate(5deg); box-shadow: 0 8px 15px rgba(0,0,0,0.3); }
+
+.hero-badge { transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s; }
+
+.text-balance { text-wrap: balance; }
+
+.title-reserva { transition: transform 0.3s ease, letter-spacing 0.3s ease; }
+
+.title-reserva:hover { transform: translateY(-5px); letter-spacing: 0.02em; }
+
+.title-pavilhao { transition: transform 0.3s ease, letter-spacing 0.3s ease; }
+
+.title-pavilhao:hover { transform: translateY(-3px); letter-spacing: 0.04em; }
+
+.ambient-icon { transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease; cursor: default; }
+
+.ambient-icon:hover { transform: translateY(-6px) scale(1.08) rotate(5deg) !important; opacity: 0.35 !important; }
+
+.required-asterisk { color: #ffcccc; }
+
+.calendar-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; }
+
+.calendar-modal-overlay.active { display: flex; }
+
+.calendar-modal-content { background: white; border-radius: 24px; padding: 24px; width: 95%; max-width: 1100px; max-height: 85vh; overflow: auto; box-shadow: 0 40px 80px rgba(0,0,0,0.4); position: relative; border: 1px solid rgba(0,0,0,0.05); }
+
+.cal-grid { display: grid; grid-template-columns: 80px repeat(7, 1fr); min-width: 900px; }
+
+.cal-cell { border-right: 1px solid #edf0f5; border-bottom: 1px solid #edf0f5; height: 70px; position: relative; }
+
+.cal-cell-header { border-right: 1px solid #edf0f5; border-bottom: 1px solid #edf0f5; height: 50px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem; background-color: #fafafa; }
+
+.event-card { position: absolute; left: 6px; right: 6px; border-radius: 8px; padding: 8px 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; color: white; }
+
+.event-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+
+.empty-cell { cursor: pointer; transition: background-color 0.2s; }
+
+.empty-cell:hover { background-color: rgba(201, 90, 90, 0.06); }
+
+.event-detail-popup { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); z-index: 210; align-items: center; justify-content: center; }
+
+.event-detail-popup.active { display: flex; }
+
+.event-detail-card { background: white; border-radius: 20px; padding: 24px; max-width: 400px; width: 90%; box-shadow: 0 30px 60px rgba(0,0,0,0.3); border-left: 6px solid; }
+
+.create-event-popup { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 220; align-items: center; justify-content: center; }
+
+.create-event-popup.active { display: flex; }
+
+.create-event-card { background: white; border-radius: 28px; padding: 28px; max-width: 650px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 40px 80px rgba(0,0,0,0.3); border-top: 8px solid #c95a5a; }
+
+.wizard-step { transition: all 0.2s ease; }
+
+input, select, textarea { transition: all 0.2s; }
+
+</style>
+
+</head>
+
+<body class="min-h-screen industrial-grid">
+
+<main class="min-h-screen">
+
+<header class="h-16 bg-white border-b flex items-center justify-between px-8">
+
+<h2 class="font-space text-2xl font-semibold cursor-default">Solicitação de Reserva do Pavilhão Maker</h2>
+
+</header>
+
+
+<section class="relative bg-[#f4f4f5] overflow-hidden hero-header">
+
+<div class="absolute inset-0 industrial-grid opacity-20 pointer-events-none"></div>
+
+<div class="absolute -right-20 -bottom-20 text-[15rem] text-zinc-200/60 select-none pointer-events-none"><span class="material-symbols-outlined">domain</span></div>
+
+<div class="relative max-w-6xl mx-auto px-8 py-16 md:py-24">
+
+<div class="flex flex-col md:flex-row gap-10 md:gap-20">
+
+<div class="flex flex-col items-start justify-center">
+
+<div class="relative cursor-default">
+
+<span class="material-symbols-outlined text-8xl md:text-9xl text-zinc-800 transition-transform duration-500 hero-icon hero-icon-main">event_seat</span>
+
+<span class="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full bg-[#c95a5a] text-white text-xs font-bold shadow-lg hero-badge"><span class="material-symbols-outlined text-sm">edit_calendar</span></span>
+
+</div>
+
+<div class="mt-6 inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-white px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-600"><span class="material-symbols-outlined text-sm">schedule</span> Antecedência mínima 48h</div>
+
+<button id="openCalendarBtn" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-zinc-300 rounded-full text-xs font-bold uppercase tracking-widest text-zinc-700 hover:bg-zinc-50 hover:border-zinc-400 transition-all"><span class="material-symbols-outlined text-sm">calendar_month</span> Ver Calendário</button>
+
+</div>
+
+<div class="flex-1 space-y-6">
+
+<div><h2 class="font-['Space_Grotesk'] text-5xl md:text-7xl font-black uppercase tracking-tight text-zinc-900 leading-[1.1] text-balance title-reserva cursor-default">Reserva do</h2><p class="font-['Space_Grotesk'] text-2xl md:text-4xl font-light text-zinc-500 mt-2 tracking-wide title-pavilhao cursor-default">Pavilhão & Maker</p><div class="w-24 h-1.5 bg-gradient-to-r from-[#c95a5a] to-[#8b1e35] mt-4 rounded-full"></div></div>
+
+<div class="space-y-4 max-w-2xl">
+
+<div class="flex gap-4"><span class="hidden sm:block w-1.5 flex-shrink-0 bg-zinc-800 rounded-full"></span><p class="text-lg md:text-xl text-zinc-700 leading-relaxed font-light">Formulário para solicitação de reserva do <strong class="font-semibold">Espaço do Pavilhão</strong> (eventos) ou do <strong class="font-semibold">Espaço Maker</strong> (máquinas).</p></div>
+
+<div class="flex gap-4"><span class="hidden sm:block w-1.5 flex-shrink-0 bg-zinc-300 rounded-full"></span><p class="text-base md:text-lg text-zinc-600 leading-relaxed font-light">A reserva deve ser solicitada por um docente responsável, respeitando o horário de funcionamento (seg-sex: 7h30–21h, sáb: 7h30–11h30). A prioridade é dada a eventos com metodologias ativas, workshops e atividades multidisciplinares.</p></div>
+
+<div class="flex gap-4"><span class="hidden sm:block w-1.5 flex-shrink-0 bg-zinc-300 rounded-full"></span><p class="text-base md:text-lg text-zinc-600 leading-relaxed font-light">Após o envio, aguarde a confirmação por e-mail. Seus dados pessoais não serão coletados automaticamente.</p></div>
+
+</div>
+
+<div class="pt-4 border-t border-dashed border-zinc-300 flex items-center gap-4 text-xs tracking-widest uppercase text-zinc-400"><span class="material-symbols-outlined text-sm">schedule</span> Seg-Sex: 7h30 – 21h00 | Sáb: 7h30 – 11h30</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section class="px-6 md:px-12 py-10 relative overflow-hidden">
+
+<div class="absolute inset-0">
+
+<span class="material-symbols-outlined absolute left-[2%] top-[8%] text-[12rem] text-[#c95a5a] ambient-icon -rotate-12" style="opacity: 0.15;">precision_manufacturing</span>
+
+<span class="material-symbols-outlined absolute left-[3%] top-[40%] text-[8rem] text-[#b94d4d] ambient-icon rotate-45" style="opacity: 0.2;">view_in_ar</span>
+
+<span class="material-symbols-outlined absolute left-[1%] top-[56%] text-[10rem] text-zinc-800 ambient-icon rotate-90" style="opacity: 0.12;">laser</span>
+
+<span class="material-symbols-outlined absolute left-[4%] top-[70%] text-[9rem] text-[#c95a5a] ambient-icon -rotate-15" style="opacity: 0.18;">engineering</span>
+
+<span class="material-symbols-outlined absolute right-[2%] top-[12%] text-[11rem] text-[#8b1e35] ambient-icon rotate-12" style="opacity: 0.15;">memory</span>
+
+<span class="material-symbols-outlined absolute right-[4%] top-[45%] text-[9rem] text-[#c95a5a] ambient-icon -rotate-45" style="opacity: 0.2;">handyman</span>
+
+<span class="material-symbols-outlined absolute right-[5%] top-[78%] text-[7rem] text-zinc-800 ambient-icon -rotate-90" style="opacity: 0.12;">settings</span>
+
+<svg class="absolute left-0 top-0 w-64 h-full opacity-10 pointer-events-none" viewBox="0 0 200 800" fill="none"><rect x="20" y="100" width="40" height="2" fill="#c95a5a"></rect><rect x="60" y="100" width="2" height="30" fill="#c95a5a"></rect><rect x="60" y="130" width="25" height="2" fill="#c95a5a"></rect><circle cx="85" cy="131" r="3" fill="#c95a5a"></circle><rect x="30" y="300" width="2" height="50" fill="#8b1e35"></rect><rect x="30" y="350" width="30" height="2" fill="#8b1e35"></rect></svg>
+
+<svg class="absolute right-0 top-0 w-64 h-full opacity-10 scale-x-[-1] pointer-events-none" viewBox="0 0 200 800" fill="none"><rect x="20" y="200" width="40" height="2" fill="#b94d4d"></rect><rect x="60" y="200" width="2" height="40" fill="#b94d4d"></rect><rect x="60" y="240" width="20" height="2" fill="#b94d4d"></rect><circle cx="80" cy="241" r="3" fill="#b94d4d"></circle><rect x="30" y="500" width="2" height="70" fill="#c95a5a"></rect><rect x="30" y="570" width="35" height="2" fill="#c95a5a"></rect></svg>
+
+</div>
+
+<div class="absolute left-0 top-0 w-64 h-64 bg-[#c95a5a]/5 blur-3xl rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+
+<div class="absolute right-0 bottom-0 w-96 h-96 bg-[#8b1e35]/5 blur-3xl rounded-full translate-x-1/3 translate-y-1/3 pointer-events-none"></div>
+
+
+<div class="max-w-4xl mx-auto relative z-10 overflow-hidden rounded-[32px] shadow-2xl border-l-8 border-black bg-gradient-to-br from-[#c95a5a] via-[#b94d4d] to-[#8b1e35] p-10 text-white form-card-hover">
+
+<div class="absolute -top-20 -right-20 w-64 h-64 bg-white/10 blur-3xl rounded-full"></div>
+
+<div class="absolute -bottom-20 -left-20 w-64 h-64 bg-black/20 blur-3xl rounded-full"></div>
+
+<div class="relative">
+
+<h1 class="font-space text-3xl mb-8 label-hover inline-block">Dados do solicitante</h1>
+
+<form class="space-y-8" id="mainForm">
+
+<div class="group"><label class="block mb-2 text-lg label-hover">Email <span class="required-asterisk">*</span></label><input type="email" placeholder="Digite seu email" required class="w-full px-5 py-4 rounded-xl text-black transition-all input-hover hover:bg-white hover:shadow-[0_0_25px_rgba(255,120,120,0.6)] focus:bg-white focus:ring-4 focus:ring-red-200 outline-none"></div>
+
+<div class="group"><label class="block mb-2 text-lg label-hover">Nome <span class="required-asterisk">*</span></label><input type="text" placeholder="Digite seu nome" required class="w-full px-5 py-4 rounded-xl text-black transition-all input-hover hover:bg-white hover:shadow-[0_0_25px_rgba(255,120,120,0.6)] focus:bg-white focus:ring-4 focus:ring-red-200 outline-none"></div>
+
+<div class="group"><label class="block mb-2 text-lg label-hover">Celular <span class="required-asterisk">*</span></label><input type="tel" placeholder="(81) 99999-9999" required class="w-full px-5 py-4 rounded-xl text-black transition-all input-hover hover:bg-white hover:shadow-[0_0_25px_rgba(255,120,120,0.6)] focus:bg-white focus:ring-4 focus:ring-red-200 outline-none"></div>
+
+<div><p class="text-xl mb-4 label-hover inline-block">Escolha o espaço <span class="required-asterisk">*</span></p>
+
+<div class="grid md:grid-cols-2 gap-6">
+
+<label class="cursor-pointer"><input type="radio" name="espaco" value="Pavilhão" class="peer hidden" required><div class="p-6 rounded-2xl bg-white/10 border border-white/30 transition-all card-option peer-checked:bg-white peer-checked:text-black peer-checked:shadow-[0_0_30px_rgba(255,180,120,0.7)]"><h3 class="text-xl font-space">Espaço Pavilhão</h3><p class="text-sm">Lounge/Co-work</p></div></label>
+
+<label class="cursor-pointer"><input type="radio" name="espaco" value="Maker" class="peer hidden"><div class="p-6 rounded-2xl bg-white/10 border border-white/30 transition-all card-option peer-checked:bg-white peer-checked:text-black peer-checked:shadow-[0_0_30px_rgba(255,180,120,0.7)]"><h3 class="text-xl font-space">Espaço Maker</h3><p class="text-sm">Máquinas / Prototipagem</p></div></label>
+
+</div>
+
+</div>
+
+<div class="flex justify-center pt-6"><button type="submit" class="bg-[#7f1d35] px-8 py-4 rounded-xl text-white text-xl transition-all btn-hover hover:bg-black hover:-translate-y-1 hover:shadow-xl active:scale-95">Avançar</button></div>
+
+</form>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- MODAL CALENDÁRIO -->
+
+<div class="calendar-modal-overlay" id="calendarModal">
+
+<div class="calendar-modal-content">
+
+<div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold font-['Space_Grotesk']">Calendário de Ocupação</h3><button id="closeCalendarBtn" class="text-zinc-400 hover:text-zinc-600"><span class="material-symbols-outlined">close</span></button></div>
+
+<div class="flex items-center justify-between mb-4"><button id="calPrevBtn" class="p-2 hover:bg-zinc-50 border border-zinc-200 rounded"><span class="material-symbols-outlined">chevron_left</span></button><h4 class="text-lg font-bold font-['Space_Grotesk']" id="calWeekTitle">12 – 18 de novembro de 2024</h4><button id="calNextBtn" class="p-2 hover:bg-zinc-50 border border-zinc-200 rounded"><span class="material-symbols-outlined">chevron_right</span></button></div>
+
+<div class="overflow-x-auto"><div id="calGridContainer" class="cal-grid border-t border-l border-[#edf0f5]"></div></div>
+
+</div>
+
+</div>
+
+
+<!-- POPUP DETALHE EVENTO -->
+
+<div class="event-detail-popup" id="eventDetailPopup">
+
+<div class="event-detail-card" id="eventDetailCard"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold font-['Space_Grotesk']" id="detailTitle">Evento</h3><button id="closeDetailPopup" class="text-zinc-400 hover:text-zinc-600"><span class="material-symbols-outlined">close</span></button></div><div class="space-y-3 text-sm"><div><span class="font-semibold text-zinc-500 uppercase text-xs">Horário</span><p id="detailTime">--</p></div><div><span class="font-semibold text-zinc-500 uppercase text-xs">Local</span><p id="detailPlace">--</p></div><div><span class="font-semibold text-zinc-500 uppercase text-xs">Descrição</span><p id="detailDesc">--</p></div></div></div>
+
+</div>
+
+
+<!-- POPUP CRIAR RESERVA - WIZARD 2 ETAPAS -->
+
+<div class="create-event-popup" id="createEventPopup">
+
+<div class="create-event-card" id="wizardContainer"></div>
+
+</div>
+
+
+<script>
+
+// ===== CONFIGURAÇÃO DOS CAMINHOS DAS PÁGINAS DE DESTINO =====
+
+// Ajuste estes caminhos conforme a localização REAL dos seus arquivos.
+
+// Exemplos (caminhos relativos a partir da pasta onde está este arquivo - Página 4.html):
+
+// - Para ir para a pasta "pasta da página 5" que está no mesmo nível da pasta atual:
+
+//   caminhoPavilhao = "../pasta da página 5/Página 5.html"
+
+// - Para ir para a pasta "pasta da página 5 parte 2" no mesmo nível:
+
+//   caminhoMaker = "../pasta da página 5 parte 2/Página 5,2.html"
+
+// Se as pastas estiverem dentro de uma pasta "Site" na raiz, use: "/Site/pasta da página 5/Página 5.html"
+
+// MUDE ABAIXO DE ACORDO COM SUA ESTRUTURA EXATA:
+
+const caminhoPavilhao = "../pasta da página 5/Página 5.html";   // ← ALTERE AQUI
+
+const caminhoMaker    = "../pasta da página 5 parte 2/Página 5,2.html"; // ← ALTERE AQUI
+
+// =============================================================
+
+// ---------- DADOS DO CALENDÁRIO ----------
+
+function formatTimeFromIndices(rowStart, rowEnd) {
+
+const hours = ['09','10','11','12','13','14','15','16','17','18','19','20','21'];
+
+return `${hours[rowStart]}:00 - ${hours[rowEnd]}:00`;
+
+}
+
+let calEvents = [
+
+{ id: 1, title: 'Hacka of Wars', place: 'Laboratório de Inovação', desc: 'Competição de hacking.', color: '#4ade80', date: '2024-11-12', rowStart: 0, rowEnd: 2 },
+
+{ id: 2, title: 'Copa do Mundo', place: 'Auditório Principal', desc: 'Transmissão dos jogos.', color: '#fb923c', date: '2024-11-13', rowStart: 2, rowEnd: 3 },
+
+{ id: 3, title: 'Oficina Maker', place: 'Sala Maker 1', desc: 'Prototipagem.', color: '#fb923c', date: '2024-11-14', rowStart: 2, rowEnd: 6 },
+
+{ id: 4, title: 'Oficina Marc.', place: 'Sala Maker 2', desc: 'Marcenaria.', color: '#facc15', date: '2024-11-15', rowStart: 2, rowEnd: 4 },
+
+{ id: 5, title: 'Palestra Inov.', place: 'Auditório', desc: 'Palestra.', color: '#c084fc', date: '2024-11-13', rowStart: 4, rowEnd: 6 },
+
+{ id: 6, title: 'Aula Design', place: 'Sala 404', desc: 'Aula especial.', color: '#60a5fa', date: '2024-11-14', rowStart: 4, rowEnd: 5 },
+
+{ id: 7, title: 'Palestra Mot.', place: 'Auditório', desc: 'Palestra.', color: '#f472b6', date: '2024-11-15', rowStart: 6, rowEnd: 9 }
+
+];
+
+calEvents.forEach(ev => { ev.time = formatTimeFromIndices(ev.rowStart, ev.rowEnd); });
+
+let weekStart = new Date(2024, 10, 11);
+
+const dayNames = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+
+const hours = ['09','10','11','12','13','14','15','16','17','18','19','20','21'];
+
+
+function getColorBySpace(space) { return space === 'Pavilhão' ? '#4ade80' : '#fb923c'; }
+
+function formatLocalDate(date) {
+
+return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+
+}
+
+function renderCalendar() {
+
+const start = new Date(weekStart);
+
+document.getElementById('calWeekTitle').innerHTML = `${start.getDate()} – ${new Date(start.getTime() + 6*86400000).getDate()} de ${start.toLocaleDateString('pt-BR',{month:'long'})} de ${start.getFullYear()}`;
+
+let html = '<div class="cal-cell-header"><span class="material-symbols-outlined text-zinc-400">schedule</span></div>';
+
+for (let i=0;i<7;i++) { let d=new Date(start); d.setDate(start.getDate()+i); html+=`<div class="cal-cell-header">${dayNames[i]} ${d.getDate()}</div>`; }
+
+for(let r=0; r<hours.length; r++) {
+
+html+=`<div class="cal-cell flex items-start justify-center pt-2 font-bold text-xs text-zinc-600">${hours[r]}:00</div>`;
+
+for(let c=1;c<=7;c++) {
+
+let cellDate = new Date(start); cellDate.setDate(start.getDate()+c-1);
+
+let dateStr = formatLocalDate(cellDate);
+
+let dayOfWeek = cellDate.getDay();
+
+let ev = calEvents.find(e=>e.date===dateStr && e.rowStart===r);
+
+if(ev) {
+
+let height = (ev.rowEnd - ev.rowStart)*70-4;
+
+html+=`<div class="cal-cell relative"><div class="event-card" style="background-color:${ev.color};top:3px;height:${height}px" data-event-id="${ev.id}"><span class="text-[10px] opacity-90">${ev.time}</span><p class="text-xs mt-0.5">${ev.title}</p></div></div>`;
+
+} else {
+
+html+=`<div class="cal-cell empty-cell" data-date="${dateStr}" data-hour="${hours[r]}:00" data-weekday="${dayOfWeek}"></div>`;
+
+}
+
+}
+
+}
+
+document.getElementById('calGridContainer').innerHTML = html;
+
+document.querySelectorAll('.event-card').forEach(card=>card.addEventListener('click',(e)=>{e.stopPropagation(); let ev=calEvents.find(e=>e.id==card.dataset.eventId); if(ev){ document.getElementById('detailTitle').innerText=ev.title; document.getElementById('detailTime').innerText=ev.time; document.getElementById('detailPlace').innerText=ev.place; document.getElementById('detailDesc').innerText=ev.desc; document.getElementById('eventDetailCard').style.borderColor=ev.color; document.getElementById('eventDetailPopup').classList.add('active'); }}));
+
+document.querySelectorAll('.empty-cell').forEach(cell=>{ cell.addEventListener('click',()=>{ let date=cell.dataset.date, hour=cell.dataset.hour; let dayOfWeek = parseInt(cell.dataset.weekday); if(dayOfWeek === 0){ alert("❌ Reservas não são permitidas aos domingos. Escolha outro dia."); return; } abrirWizard(date, hour); }); });
+
+}
+
+
+// WIZARD 2 ETAPAS
+
+let wizardData = { step:1, date:null, startHour:null, solicitante:{ nome:'', email:'', celular:'' }, espaco:'Pavilhão', formData:{} };
+
+function abrirWizard(date, startHour) {
+
+wizardData = { step:1, date, startHour, solicitante:{ nome:'', email:'', celular:'' }, espaco:'Pavilhão', formData:{} };
+
+renderWizard();
+
+document.getElementById('createEventPopup').classList.add('active');
+
+}
+
+
+function renderWizard() {
+
+const container = document.getElementById('wizardContainer');
+
+if(!container) return;
+
+if(wizardData.step === 1) {
+
+container.innerHTML = `
+
+<div class="flex justify-between items-center mb-5"><h3 class="text-2xl font-bold font-['Space_Grotesk'] text-zinc-800">Etapa 1 - Dados do solicitante</h3><button id="closeWizardBtn" class="text-zinc-400 hover:text-zinc-600"><span class="material-symbols-outlined">close</span></button></div>
+
+<div class="space-y-5">
+
+<div><label class="block text-sm font-semibold text-zinc-600">Email *</label><input type="email" id="wizEmail" class="w-full px-4 py-3 border rounded-xl" placeholder="seu@email.com"></div>
+
+<div><label class="block text-sm font-semibold text-zinc-600">Nome *</label><input type="text" id="wizNome" class="w-full px-4 py-3 border rounded-xl" placeholder="Nome completo"></div>
+
+<div><label class="block text-sm font-semibold text-zinc-600">Celular *</label><input type="tel" id="wizCelular" class="w-full px-4 py-3 border rounded-xl" placeholder="(81) 99999-9999"></div>
+
+<div><label class="block text-sm font-semibold text-zinc-600">Escolha o espaço *</label>
+
+<div class="flex gap-4 mt-2"><label class="flex items-center gap-2"><input type="radio" name="wizEspaco" value="Pavilhão" checked> <span>Espaço Pavilhão (Lounge/Co-work)</span></label><label class="flex items-center gap-2"><input type="radio" name="wizEspaco" value="Maker"> <span>Espaço Maker (Máquinas/Prototipagem)</span></label></div>
+
+</div>
+
+<div class="flex justify-end pt-4"><button id="nextStep1Btn" class="px-6 py-2 bg-[#c95a5a] text-white rounded-xl">Avançar →</button></div>
+
+</div>
+
+`;
+
+document.getElementById('closeWizardBtn')?.addEventListener('click',()=>document.getElementById('createEventPopup').classList.remove('active'));
+
+document.getElementById('nextStep1Btn')?.addEventListener('click',()=>{
+
+let email = document.getElementById('wizEmail').value.trim();
+
+let nome = document.getElementById('wizNome').value.trim();
+
+let celular = document.getElementById('wizCelular').value.trim();
+
+if(!email || !nome || !celular){ alert("Preencha todos os campos do solicitante."); return; }
+
+let espaco = document.querySelector('input[name="wizEspaco"]:checked').value;
+
+wizardData.solicitante = { email, nome, celular };
+
+wizardData.espaco = espaco;
+
+wizardData.step = 2;
+
+renderWizard();
+
+});
+
+} else if(wizardData.step === 2) {
+
+let isMaker = (wizardData.espaco === 'Maker');
+
+let horaInicio = wizardData.startHour;
+
+function getDefaultEndTime(startTime) {
+
+let [hour, minute] = startTime.split(':');
+
+let nextHour = (parseInt(hour) + 1).toString().padStart(2, '0');
+
+return `${nextHour}:00`;
+
+}
+
+let defaultEndTime = getDefaultEndTime(horaInicio);
+
+container.innerHTML = `
+
+<div class="flex justify-between items-center mb-5"><h3 class="text-2xl font-bold font-['Space_Grotesk'] text-zinc-800">Etapa 2 - Dados da reserva (${wizardData.espaco === 'Maker' ? 'Espaço Maker' : 'Espaço Pavilhão'})</h3><button id="closeWizardBtn2" class="text-zinc-400 hover:text-zinc-600"><span class="material-symbols-outlined">close</span></button></div>
+
+<div class="space-y-4">
+
+${isMaker ? `
+
+<div><label class="block font-semibold">5. Maquinário a ser utilizado para a reserva: *</label><div class="flex gap-3 mt-1"><label><input type="radio" name="maquina" value="Cortadora a laser"> Cortadora a laser</label><label><input type="radio" name="maquina" value="Impressora 3D"> Impressora 3D</label><label><input type="radio" name="maquina" value="Router CNC"> Router CNC</label></div></div>
+
+<div><label>6. Professor solicitante: *</label><input type="text" id="professor" class="w-full border rounded-xl px-3 py-2"></div>
+
+<div><label>7. A que se destina o projeto: *</label><input type="text" id="projeto" class="w-full border rounded-xl px-3 py-2"></div>
+
+<div><label>8. Qual a sua turma: *</label><input type="text" id="turma" class="w-full border rounded-xl px-3 py-2"></div>
+
+<div><label>9. Data de utilização do maquinário: *</label><input type="date" id="dataUtil" value="${wizardData.date}" class="w-full border rounded-xl px-3 py-2"></div>
+
+<div><label>10. Horário de início da atividade: *</label><input type="time" id="horaInicioMaker" value="${horaInicio}" class="w-full border rounded-xl px-3 py-2"></div>
+
+<div><label>11. Horário de finalização da atividade: *</label><input type="time" id="horaFimMaker" value="${defaultEndTime}" class="w-full border rounded-xl px-3 py-2"></div>
+
+` : `
+
+<div><label>5. Nome do evento *</label><input type="text" id="nomeEvento" class="w-full border rounded-xl px-3 py-2"></div>
+
+<div><label>6. Descrição do evento *</label><textarea id="descEvento" rows="2" class="w-full border rounded-xl px-3 py-2"></textarea></div>
+
+<div><label>7. Quantidade de participantes *</label><input type="number" id="qtdPart" class="w-full border rounded-xl px-3 py-2"></div>
+
+<div><label>8. Data do evento *</label><input type="date" id="dataEvento" value="${wizardData.date}" class="w-full border rounded-xl px-3 py-2"></div>
+
+<div><label>9. Horário de início *</label><input type="time" id="horaInicioPav" value="${horaInicio}" class="w-full border rounded-xl px-3 py-2"></div>
+
+<div><label>10. Horário de finalização *</label><input type="time" id="horaFimPav" value="${defaultEndTime}" class="w-full border rounded-xl px-3 py-2"></div>
+
+`}
+
+<div class="flex justify-between gap-3 pt-4"><button id="backStep1" class="px-5 py-2 border rounded-xl">← Voltar</button><button id="submitReserva" class="px-5 py-2 bg-green-700 text-white rounded-xl">Enviar Reserva</button></div>
+
+</div>
+
+`;
+
+function setupTimeSync(inicioId, fimId) {
+
+let inicioInput = document.getElementById(inicioId);
+
+let fimInput = document.getElementById(fimId);
+
+if(inicioInput && fimInput) {
+
+inicioInput.addEventListener('change', function() {
+
+let [hour, minute] = this.value.split(':');
+
+let nextHour = (parseInt(hour) + 1).toString().padStart(2, '0');
+
+fimInput.value = `${nextHour}:00`;
+
+});
+
+}
+
+}
+
+if(isMaker) setupTimeSync('horaInicioMaker', 'horaFimMaker');
+
+else setupTimeSync('horaInicioPav', 'horaFimPav');
+
+document.getElementById('closeWizardBtn2')?.addEventListener('click',()=>document.getElementById('createEventPopup').classList.remove('active'));
+
+document.getElementById('backStep1')?.addEventListener('click',()=>{ wizardData.step = 1; renderWizard(); });
+
+document.getElementById('submitReserva')?.addEventListener('click',()=>{
+
+if(isMaker){
+
+let maq = document.querySelector('input[name="maquina"]:checked')?.value;
+
+let prof = document.getElementById('professor')?.value.trim();
+
+let proj = document.getElementById('projeto')?.value.trim();
+
+let turma = document.getElementById('turma')?.value.trim();
+
+let dataUso = document.getElementById('dataUtil')?.value;
+
+let inicio = document.getElementById('horaInicioMaker')?.value;
+
+let fim = document.getElementById('horaFimMaker')?.value;
+
+if(!maq || !prof || !proj || !turma || !dataUso || !inicio || !fim){ alert("Preencha todos os campos obrigatórios."); return; }
+
+let startIdx = hours.indexOf(inicio.substring(0,2));
+
+let endIdx = hours.indexOf(fim.substring(0,2));
+
+if(startIdx===-1 || endIdx===-1 || endIdx<=startIdx){ alert("Horários inválidos (use apenas horários inteiros entre 09 e 21 e final após início)."); return; }
+
+if(hasConflict(dataUso, inicio, (endIdx-startIdx))){ alert("Conflito de horário! Já existe um evento nesse período."); return; }
+
+let title = `${prof} - ${maq}`;
+
+let desc = `Projeto: ${proj} | Turma: ${turma} | Solicitante: ${wizardData.solicitante.nome} (${wizardData.solicitante.email})`;
+
+addEventToCalendar(title, `Espaço Maker - ${maq}`, desc, 'Maker', dataUso, startIdx, endIdx);
+
+alert(`✅ Reserva criada!\nMaquinário: ${maq}\nProfessor: ${prof}\nData: ${dataUso} | ${inicio} - ${fim}`);
+
+document.getElementById('createEventPopup').classList.remove('active');
+
+} else {
+
+let nomeEv = document.getElementById('nomeEvento')?.value.trim();
+
+let descEv = document.getElementById('descEvento')?.value.trim();
+
+let qtd = document.getElementById('qtdPart')?.value;
+
+let dataEv = document.getElementById('dataEvento')?.value;
+
+let inicio = document.getElementById('horaInicioPav')?.value;
+
+let fim = document.getElementById('horaFimPav')?.value;
+
+if(!nomeEv || !descEv || !qtd || !dataEv || !inicio || !fim){ alert("Preencha todos os campos obrigatórios."); return; }
+
+let startIdx = hours.indexOf(inicio.substring(0,2));
+
+let endIdx = hours.indexOf(fim.substring(0,2));
+
+if(startIdx===-1 || endIdx===-1 || endIdx<=startIdx){ alert("Horários inválidos (use apenas horários inteiros entre 09 e 21 e final após início)."); return; }
+
+if(hasConflict(dataEv, inicio, (endIdx-startIdx))){ alert("Conflito de horário!"); return; }
+
+let title = nomeEv;
+
+let desc = `${descEv} | Participantes: ${qtd} | Solicitante: ${wizardData.solicitante.nome}`;
+
+addEventToCalendar(title, `Pavilhão - ${wizardData.solicitante.nome}`, desc, 'Pavilhão', dataEv, startIdx, endIdx);
+
+alert(`✅ Evento criado!\nTítulo: ${nomeEv}\nData: ${dataEv} | ${inicio} - ${fim}`);
+
+document.getElementById('createEventPopup').classList.remove('active');
+
+}
+
+});
+
+}
+
+}
+
+
+function hasConflict(date, startHourStr, durationHours){
+
+let startIdx = hours.indexOf(startHourStr.substring(0,2));
+
+if(startIdx===-1) return true;
+
+let endIdx = startIdx + durationHours;
+
+for(let ev of calEvents) if(ev.date===date && ((startIdx>=ev.rowStart && startIdx<ev.rowEnd) || (endIdx>ev.rowStart && endIdx<=ev.rowEnd) || (startIdx<=ev.rowStart && endIdx>=ev.rowEnd))) return true;
+
+return false;
+
+}
+
+
+function addEventToCalendar(title, place, desc, space, date, rowStart, rowEnd){
+
+let timeStr = formatTimeFromIndices(rowStart, rowEnd);
+
+let newId = calEvents.length? Math.max(...calEvents.map(e=>e.id))+1 : 1;
+
+calEvents.push({ id:newId, title, time:timeStr, place, desc, color:getColorBySpace(space), date, rowStart, rowEnd });
+
+renderCalendar();
+
+}
+
+
+// ---------- EVENTOS GLOBAIS (DOMContentLoaded) ----------
+
+document.addEventListener('DOMContentLoaded', function() {
+
+const openBtn = document.getElementById('openCalendarBtn');
+
+const modal = document.getElementById('calendarModal');
+
+const closeBtn = document.getElementById('closeCalendarBtn');
+
+const prevBtn = document.getElementById('calPrevBtn');
+
+const nextBtn = document.getElementById('calNextBtn');
+
+if (openBtn) {
+
+openBtn.addEventListener('click', (e) => {
+
+e.preventDefault();
+
+if (modal) {
+
+renderCalendar();
+
+modal.classList.add('active');
+
+}
+
+});
+
+}
+
+if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+
+if (prevBtn) prevBtn.addEventListener('click', () => { weekStart.setDate(weekStart.getDate()-7); renderCalendar(); });
+
+if (nextBtn) nextBtn.addEventListener('click', () => { weekStart.setDate(weekStart.getDate()+7); renderCalendar(); });
+
+document.getElementById('closeDetailPopup')?.addEventListener('click', () => document.getElementById('eventDetailPopup').classList.remove('active'));
+
+document.getElementById('eventDetailPopup')?.addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('active'); });
+
+// --- REDIRECIONAMENTO DO FORMULÁRIO PRINCIPAL (COM CAMINHOS CONFIGURÁVEIS) ---
+
+document.getElementById('mainForm')?.addEventListener('submit', (e) => {
+
+e.preventDefault();
+
+const selectedSpace = document.querySelector('input[name="espaco"]:checked');
+
+if (!selectedSpace) {
+
+alert("Por favor, escolha um espaço (Pavilhão ou Maker).");
+
+return;
+
+}
+
+const spaceValue = selectedSpace.value;
+
+let targetPage = "";
+
+if (spaceValue === 'Pavilhão') {
+
+targetPage = caminhoPavilhao;
+
+} else if (spaceValue === 'Maker') {
+
+targetPage = caminhoMaker;
+
+} else {
+
+alert("Opção inválida.");
+
+return;
+
+}
+
+console.log("Tentando redirecionar para:", targetPage);
+
+// Tenta redirecionar. Se falhar, exibe uma mensagem amigável.
+
+try {
+
+window.location.href = targetPage;
+
+} catch(err) {
+
+alert(`Erro ao redirecionar para ${targetPage}. Verifique o caminho.\nDetalhes: ${err.message}`);
+
+}
+
+});
+
+document.getElementById('createEventPopup')?.addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('active'); });
+
+});
+
+</script>
+
+</body>
+
+</html>
