@@ -1,0 +1,55 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #8b5000;
+  --color-primary-container: #ff9800;
+  --color-on-primary-container: #653900;
+  --color-secondary: #5f5e5e;
+  --color-tertiary-container: #e0a800;
+  --color-on-tertiary-container: #584000;
+  --color-surface: #f9f9fa;
+  --color-background: #f9f9fa;
+  --color-error: #ba1a1a;
+  --color-outline-variant: #dbc2ad;
+  --color-on-surface-variant: #554434;
+  --color-surface-container-low: #f3f3f4;
+  --color-surface-container: #eeeeef;
+  --color-surface-container-high: #e8e8e9;
+  --font-space: 'Space Grotesk', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --spacing-gutter: 24px;
+  --spacing-sidebar: 280px;
+}
+
+:root {
+  color-scheme: light;
+  font-family: var(--font-inter);
+  background: var(--color-background);
+  color: var(--color-on-surface-variant);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-inter);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+}
