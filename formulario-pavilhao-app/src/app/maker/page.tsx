@@ -3,10 +3,13 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+import { inputSolicitantes, inputForms, checkConflicts } from '@/lib/services/supabaseServices';
 
 export default function MakerPage() {
   const router = useRouter();
-  const [toastVisible, setToastVisible] = useState(false);
+  const [toast, setToast] = useState<{ visible: boolean; title: string; message: string; type: 'success' | 'error' }>({
+    visible: false, title: '', message: '', type: 'success'
+  });
 
   const [formData, setFormData] = useState({
     email: '',
@@ -17,6 +20,7 @@ export default function MakerPage() {
     destino: '',
     turma: '',
     data: '',
+    detalhes: '',
     inicio: '',
     fim: ''
   });
@@ -27,9 +31,24 @@ export default function MakerPage() {
   useEffect(() => {
     const userSaved = localStorage.getItem('pavilhao_form_user');
     const pageSaved = localStorage.getItem('pavilhao_form_page_maker');
+    
     let combined = { ...formData };
-    if (userSaved) combined = { ...combined, ...JSON.parse(userSaved) };
+    
+    // Load page-specific data first
     if (pageSaved) combined = { ...combined, ...JSON.parse(pageSaved) };
+    
+    // Then overwrite with user/calendar data (priority)
+    if (userSaved) {
+      const userParsed = JSON.parse(userSaved);
+      // Only overwrite if calendar selection exists
+      combined = { 
+        ...combined, 
+        ...userParsed,
+        data: userParsed.data || combined.data,
+        inicio: userParsed.inicio || combined.inicio
+      };
+    }
+    
     setFormData(combined);
     setTimeout(() => {
       isLoaded.current = true;
@@ -44,11 +63,101 @@ export default function MakerPage() {
     }
   }, [formData]);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const showToast = (title: string, message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ visible: true, title, message, type });
+    setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 5000);
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Submit Maker:", formData);
-    setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 5000);
+
+    const phoneDigits = formData.celular.replace(/\D/g, '');
+    if (phoneDigits.length < 11) {
+      showToast('Telefone Incompleto', 'O número deve ter 11 dígitos (DDD + 9 números).', 'error');
+      return;
+    }
+
+    const [startH, startM] = formData.inicio.split(':').map(Number);
+    const [endH, endM] = formData.fim.split(':').map(Number);
+    const startTimeInMinutes = startH * 60 + startM;
+    const endTimeInMinutes = endH * 60 + endM;
+
+    if (startTimeInMinutes >= endTimeInMinutes) {
+      showToast('Horário Inválido', 'O horário de término deve ser posterior ao de início.', 'error');
+      return;
+    }
+
+    const bookingDate = new Date(formData.data + 'T00:00:00');
+    const dayOfWeek = bookingDate.getDay(); 
+
+    const minTime = 7 * 60 + 30; // 07:30
+    let maxTime = 21 * 60; // 21:00
+
+    if (dayOfWeek === 6) { // Sábado
+      maxTime = 11 * 60 + 30; // 11:30
+    }
+
+    if (startTimeInMinutes < minTime || endTimeInMinutes > maxTime) {
+      const rangeStr = dayOfWeek === 6 ? '07:30 às 11:30' : '07:30 às 21:00';
+      showToast('Fora do Horário', `O funcionamento para este dia é das ${rangeStr}.`, 'error');
+      return;
+    }
+
+    if (!formData.maquinario) {
+      showToast('Maquinário Necessário', 'Por favor, selecione qual máquina você pretende utilizar.', 'error');
+      return;
+    }
+
+    const [selH, selM] = formData.inicio.split(':').map(Number);
+    const selectedDateTime = new Date(formData.data + 'T00:00:00');
+    selectedDateTime.setHours(selH, selM, 0, 0);
+    const now = new Date();
+
+    if (selectedDateTime < now) {
+      showToast('Horário Passado', 'O horário selecionado já ocorreu.', 'error');
+      return;
+    }
+
+    try {
+      const isConflict = await checkConflicts('maker', formData.data, formData.inicio, formData.fim);
+      if (isConflict) {
+        showToast('Espaço Ocupado', 'Já existe uma reserva confirmada para este horário no Maker.', 'error');
+        return;
+      }
+
+      const solicitanteId = await inputSolicitantes(formData.nome, formData.email, formData.celular);
+      
+      await inputForms({
+        indor_space: 'maker',
+        machine: formData.maquinario,
+        event_name: formData.destino,
+        description: formData.detalhes,
+        event_data: formData.data,
+        time_start: formData.inicio,
+        time_finished: formData.fim,
+        id_solicitante: solicitanteId,
+        professor_name: formData.professor,
+        class_group: formData.turma
+      });
+
+      console.log("Submit Maker Sucesso");
+      showToast('Solicitação enviada!', 'Redirecionando...', 'success');
+      
+      setTimeout(() => {
+        router.push('/?success=true');
+      }, 1500);
+
+      // Clear fields
+      setFormData(prev => ({ 
+        ...prev, 
+        maquinario: '', professor: '', destino: '', turma: '', data: '', inicio: '', fim: '' 
+      }));
+
+      // Fields cleared
+    } catch (error) {
+      showToast('Erro no Envio', 'Não foi possível completar sua solicitação. Tente novamente.', 'error');
+      console.error(error);
+    }
   };
 
   return (
@@ -116,15 +225,14 @@ export default function MakerPage() {
       <section className="px-6 md:px-12 py-10 relative overflow-hidden">
         <div className="absolute inset-0">
           <span className="material-symbols-outlined absolute left-[2%] top-[5%] !text-[176px] text-[#c95a5a] ambient-icon -rotate-12" style={{ opacity: 0.15 }}>precision_manufacturing</span>
-          <span className="material-symbols-outlined absolute left-[4%] top-[35%] !text-[128px] text-[#b94d4d] ambient-icon rotate-45" style={{ opacity: 0.2 }}>view_in_ar</span>
-          <span className="material-symbols-outlined absolute left-[1%] top-[50%] !text-[160px] text-zinc-800 ambient-icon rotate-90" style={{ opacity: 0.12 }}>flare</span>
-          <span className="material-symbols-outlined absolute left-[3%] top-[58%] !text-[144px] text-[#c95a5a] ambient-icon -rotate-15" style={{ opacity: 0.18 }}>engineering</span>
-          <span className="material-symbols-outlined absolute left-[2%] top-[83%] !text-[112px] text-[#8b1e35] ambient-icon rotate-6" style={{ opacity: 0.15 }}>build</span>
+          <span className="material-symbols-outlined absolute left-[4%] top-[30%] !text-[128px] text-[#b94d4d] ambient-icon rotate-45" style={{ opacity: 0.2 }}>view_in_ar</span>
+          <span className="material-symbols-outlined absolute left-[3%] top-[60%] !text-[144px] text-[#c95a5a] ambient-icon -rotate-15" style={{ opacity: 0.18 }}>engineering</span>
+          <span className="material-symbols-outlined absolute left-[2%] top-[85%] !text-[112px] text-[#8b1e35] ambient-icon rotate-6" style={{ opacity: 0.15 }}>build</span>
 
           <span className="material-symbols-outlined absolute right-[2%] top-[8%] !text-[176px] text-[#8b1e35] ambient-icon rotate-12" style={{ opacity: 0.15 }}>memory</span>
           <span className="material-symbols-outlined absolute right-[5%] top-[32%] !text-[144px] text-[#c95a5a] ambient-icon -rotate-45" style={{ opacity: 0.2 }}>handyman</span>
-          <span className="material-symbols-outlined absolute right-[2%] top-[56%] !text-[160px] text-zinc-800 ambient-icon -rotate-90" style={{ opacity: 0.12 }}>settings</span>
-          <span className="material-symbols-outlined absolute right-[4%] top-[80%] !text-[112px] text-[#b94d4d] ambient-icon rotate-30" style={{ opacity: 0.2 }}>bolt</span>
+          <span className="material-symbols-outlined absolute right-[2%] top-[58%] !text-[160px] text-zinc-800 ambient-icon -rotate-90" style={{ opacity: 0.12 }}>settings</span>
+          <span className="material-symbols-outlined absolute right-[4%] top-[82%] !text-[112px] text-[#b94d4d] ambient-icon rotate-30" style={{ opacity: 0.2 }}>bolt</span>
 
           <svg className="absolute left-0 top-0 w-64 h-full opacity-10 pointer-events-none" viewBox="0 0 200 800" fill="none">
             <rect x="20" y="100" width="40" height="2" fill="#c95a5a" />
@@ -144,7 +252,7 @@ export default function MakerPage() {
           </svg>
         </div>
 
-        <div className="max-w-4xl mx-auto relative z-10 overflow-hidden rounded-[32px] shadow-2xl border-l-8 border-black bg-gradient-to-br from-[#c95a5a] via-[#b94d4d] to-[#8b1e35] p-10 text-white form-card-hover">
+        <div className="max-w-4xl mx-auto relative z-10 overflow-hidden rounded-[32px] shadow-2xl border-l-8 border-[#4a0e1c] bg-gradient-to-br from-[#c95a5a] via-[#b94d4d] to-[#8b1e35] p-10 text-white form-card-hover">
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 blur-3xl rounded-full" />
           <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-black/20 blur-3xl rounded-full" />
           <div className="relative">
@@ -158,7 +266,6 @@ export default function MakerPage() {
                       type="radio" 
                       name="maquinario" 
                       className="peer hidden" 
-                      required 
                       checked={formData.maquinario === 'laser'}
                       onChange={() => setFormData({ ...formData, maquinario: 'laser' })}
                     />
@@ -230,7 +337,18 @@ export default function MakerPage() {
                 />
               </div>
               <div>
-                <label className="block mb-2 text-[18px] label-hover">9. Data de utilização do maquinário: <span className="required-asterisk">*</span></label>
+                <label className="block mb-2 text-[18px] label-hover">9. Descrição detalhada do projeto: <span className="required-asterisk">*</span></label>
+                <textarea 
+                  placeholder="Explique detalhadamente o que será trabalhado" 
+                  required 
+                  rows={4}
+                  value={formData.detalhes}
+                  onChange={(e) => setFormData({ ...formData, detalhes: e.target.value })}
+                  className="w-full px-5 py-4 rounded-xl text-black transition-all input-hover outline-none !bg-white resize-none" 
+                />
+              </div>
+              <div>
+                <label className="block mb-2 text-[18px] label-hover">10. Data de utilização do maquinário: <span className="required-asterisk">*</span></label>
                 <input 
                   type="date" 
                   required 
@@ -269,14 +387,20 @@ export default function MakerPage() {
         </div>
       </section>
 
-      {toastVisible && (
-        <div className="fixed bottom-8 right-8 z-[9999] flex items-center gap-4 bg-[#1e1e1e] text-white px-6 py-4 rounded-2xl shadow-2xl border-l-4 border-green-500">
-          <span className="material-symbols-outlined text-green-400 !text-[24px]">check_circle</span>
+      {toast.visible && (
+        <div className={`fixed bottom-8 right-8 z-[9999] flex items-center gap-4 bg-[#1e1e1e] text-white px-6 py-4 rounded-2xl shadow-2xl border-l-4 animate-in fade-in slide-in-from-bottom-5 duration-300 ${
+          toast.type === 'success' ? 'border-green-500' : 'border-red-500'
+        }`}>
+          <span className={`material-symbols-outlined !text-[24px] ${
+            toast.type === 'success' ? 'text-green-400' : toast.type === 'error' ? 'text-red-400' : 'text-blue-400'
+          }`}>
+            {toast.type === 'success' ? 'check_circle' : 'cancel'}
+          </span>
           <div className="flex flex-col">
-            <span className="font-bold text-[14px] font-space">Solicitação enviada!</span>
-            <span className="text-[11px] text-zinc-400">Aguarde o retorno da equipe.</span>
+            <span className="font-bold text-[14px] font-space">{toast.title}</span>
+            <span className="text-[11px] text-zinc-400">{toast.message}</span>
           </div>
-          <button onClick={() => setToastVisible(false)} className="ml-2 text-zinc-500 hover:text-white">
+          <button onClick={() => setToast({ ...toast, visible: false })} className="ml-2 text-zinc-500 hover:text-white transition-colors">
             <span className="material-symbols-outlined !text-[14px]">close</span>
           </button>
         </div>
