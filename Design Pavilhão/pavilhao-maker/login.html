@@ -241,6 +241,12 @@
       passwordInput.type = isPassword ? 'text' : 'password';
       eyeIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
     });
+
+    // Redirecionar para o dashboard após login
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      window.location.href = 'dashboard.html';
+    });
   </script>
 </body>
 </html>

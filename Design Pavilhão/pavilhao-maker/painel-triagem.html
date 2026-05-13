@@ -211,15 +211,15 @@ body { font-family: 'Inter', sans-serif; background-color: #f9f9fa; }
     </div>
   </div>
   <nav class="flex-1 px-2 space-y-1">
-    <a class="bg-zinc-800 text-white border-l-4 border-orange-500 px-4 py-3 flex items-center gap-3 font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="#">
+    <a class="bg-zinc-800 text-white border-l-4 border-orange-500 px-4 py-3 flex items-center gap-3 font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="painel-triagem.html">
       <span class="material-symbols-outlined">fact_check</span>
       <span>Triagem</span>
     </a>
-    <a class="text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-4 py-3 flex items-center gap-3 transition-all font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="#">
+    <a class="text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-4 py-3 flex items-center gap-3 transition-all font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="solicitacao.html">
       <span class="material-symbols-outlined">add_box</span>
       <span>Nova Solicitação</span>
     </a>
-    <a class="text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-4 py-3 flex items-center gap-3 transition-all font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="#">
+    <a class="text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-4 py-3 flex items-center gap-3 transition-all font-['Space_Grotesk'] text-sm font-medium uppercase tracking-widest nav-link" href="dashboard.html">
       <span class="material-symbols-outlined">calendar_today</span>
       <span>Calendário</span>
     </a>
@@ -461,7 +461,8 @@ body { font-family: 'Inter', sans-serif; background-color: #f9f9fa; }
 <!-- Empty State / Footer hint -->
 <div class="mt-12 text-center p-8 border border-dashed border-zinc-300 rounded-sm">
   <p class="text-on-surface-variant font-body-md text-sm italic">Fim das solicitações pendentes para hoje.</p>
-  <button class="mt-4 text-primary font-label-caps text-xs flex items-center justify-center gap-1 mx-auto hover:underline">
+  <button class="mt-4 text-primary font-label-caps text-xs flex items-center justify-center gap-1 mx-auto hover:underline"
+          onclick="alert('Histórico de triagem estará disponível na versão completa do sistema.')">
     <span class="material-symbols-outlined text-sm">history</span> VER HISTÓRICO DE TRIAGEM
   </button>
 </div>
@@ -471,7 +472,7 @@ body { font-family: 'Inter', sans-serif; background-color: #f9f9fa; }
 </main>
 
 <!-- Contextual FAB -->
-<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
+<button onclick="window.location.href='solicitacao.html'" class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
   <span class="material-symbols-outlined text-3xl">add</span>
 </button>
 
